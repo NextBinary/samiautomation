@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import hero from "@/assets/images/hero.png";
 import hero2 from "@/assets/images/hero2.png";
 import Image from "next/image";
+import ButtonBlue from "../button";
 
 export default function Hero() {
   const heroTexts = [
@@ -55,7 +56,6 @@ export default function Hero() {
   return (
     <div className="bg-[#F6F6F6] py-10 sm:h-[70dvh] sm:py-0">
       <div className="grid h-full w-full grid-cols-1 items-center justify-between gap-4 md:grid-cols-12">
-        {/* Left side - Animated Text */}
         <div className="min-w-full pl-4 text-left md:col-span-6 md:pl-10">
           <div
             className="transition-all duration-1000 ease-in-out"
@@ -63,23 +63,22 @@ export default function Hero() {
               opacity: fade ? 1 : 0,
             }}
           >
-            <p className="mb-2 text-left text-base font-medium text-[#0060B7]">
+            <p className="mb-2 text-left font-nunito text-base font-medium text-[#0060B7]">
               {heroTexts[currentIndex].topHeading}
             </p>
-            <div className="mb-4 text-left text-3xl font-normal sm:text-4xl md:text-5xl">
+            <div className="mb-4 text-left font-nunito text-3xl font-normal sm:text-4xl md:text-5xl">
               <span className="text-black">{heroTexts[currentIndex].titlePart1} </span>
               <br className="md:hidden" />
-              <span className="text-[#0060B7]">{heroTexts[currentIndex].titlePart2}</span>
+              <span className="font-nunito text-[#0060B7]">
+                {heroTexts[currentIndex].titlePart2}
+              </span>
             </div>
-            <p className="mx-0 max-w-lg text-left text-base font-light text-gray-700 sm:text-lg">
+            <p className="mx-0 max-w-lg text-left font-nunito text-base font-light text-gray-700 sm:text-lg">
               {heroTexts[currentIndex].description}
             </p>
-            <button className="mt-6 border border-[#0060B7] bg-white px-8 py-2 text-sm font-medium text-[#0060B7] transition duration-300 hover:bg-[#0060B7] hover:text-white">
-              SHOP NOW
-            </button>
+            <ButtonBlue title={"Shop Now"} />
           </div>
         </div>
-
         {/* Right side - Animated Image */}
         <div className="flex items-center justify-center md:col-span-6">
           <div
