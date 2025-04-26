@@ -41,7 +41,7 @@ export default function WhySamiAutomation() {
   ];
 
   return (
-    <div className="container mx-auto my-24 px-4">
+    <section className="my-24">
       <h2 className="mb-10 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
         Why Sami Automation
       </h2>
@@ -67,6 +67,6 @@ export default function WhySamiAutomation() {
           </div>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

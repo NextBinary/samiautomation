@@ -73,16 +73,14 @@ export default function FeatureProduct() {
 
   return (
     <section className="">
-      <div className="container mx-auto px-4">
-        <h2 className="mb-8 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
-          Best Selling Products
-        </h2>
+      <h2 className="mb-8 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
+        Best Selling Products
+      </h2>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
       </div>
     </section>
   );
