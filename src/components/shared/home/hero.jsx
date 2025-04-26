@@ -73,7 +73,7 @@ export default function Hero() {
                 {heroTexts[currentIndex].titlePart2}
               </span>
             </div>
-            <p className="mx-0 max-w-lg text-left font-nunito text-base font-light text-gray-700 sm:text-lg">
+            <p className="mx-0 mb-5 max-w-lg text-left font-nunito text-base font-light text-gray-700 sm:text-lg">
               {heroTexts[currentIndex].description}
             </p>
             <ButtonBlue title={"Shop Now"} />

@@ -4,9 +4,9 @@ import Navbar from "@/components/shared/navbar";
 
 const RootWrapper = ({ children }) => {
   return (
-    <div className="container mx-auto">
+    <div className="container-fluid">
       <Navbar />
-      {children}
+      <div className="container mx-auto"> {children}</div>
     </div>
   );
 };
