@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/components/shared/footer";
 import Navbar from "@/components/shared/navbar";
 
 const RootWrapper = ({ children }) => {
@@ -7,6 +8,7 @@ const RootWrapper = ({ children }) => {
     <div className="container-fluid">
       <Navbar />
       <div className="container mx-auto"> {children}</div>
+      <Footer />
     </div>
   );
 };
