@@ -1,5 +1,5 @@
+"use client";
 import Image from "next/image";
-import { Heart } from "lucide-react";
 import ButtonBlue from "../button";
 
 export default function ProductCard({ product }) {
@@ -38,8 +38,11 @@ export default function ProductCard({ product }) {
               </span>
             )}
           </p>
-
-          <ButtonBlue title={"Book Now"} className="w-24 whitespace-nowrap px-2" />
+          <ButtonBlue
+            title={"Book Now"}
+            handler={`/product/${product.id}`}
+            className="w-28 whitespace-nowrap"
+          />
         </div>
       </div>
     </div>

@@ -1,6 +1,15 @@
-export default function CardCategory({ image, title }) {
+"use client";
+import { useRouter } from "next/navigation";
+
+export default function CardCategory({ id, image, title }) {
+  const router = useRouter();
   return (
-    <div className="group relative overflow-hidden rounded-lg bg-white shadow-md hover:cursor-pointer">
+    <div
+      className="group relative overflow-hidden rounded-lg bg-white shadow-md hover:cursor-pointer"
+      onClick={() => {
+        router.push(`products/${id}`);
+      }}
+    >
       <div className="h-[400px] overflow-hidden">
         <img
           src={image}
