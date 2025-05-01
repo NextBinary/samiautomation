@@ -42,3 +42,9 @@
     @apply bg-primary text-background;
   }
 }
+
+.testi_background_Image {
+  background-image: url("../assets/images/background.png");
+  background-size: cover;
+  background-position: center;
+}
