@@ -34,7 +34,7 @@ export default function ProductCard({ product }) {
             <span className="text-xl font-semibold text-[#191D23]">৳{price.toFixed(1)}</span>
             {hasDiscount && discountPrice && (
               <span className="ml-4 text-base font-light text-[#191D23] line-through">
-                ${discountPrice.toFixed(1)}
+                ৳{discountPrice.toFixed(1)}
               </span>
             )}
           </p>
