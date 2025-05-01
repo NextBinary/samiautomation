@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import ButtonBlue from "@/components/shared/button";
+import ContactModal from "@/components/shared/ui/ContactModal";
 
 export default function Product() {
   // Product data object with all the details
@@ -37,10 +38,16 @@ export default function Product() {
 
   // State for selected main image
   const [selectedImage, setSelectedImage] = useState(0);
+  // State for contact modal visibility
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   // Extract data from the product object
   const { name, currentPrice, originalPrice, images, features, specifications, descriptionText } =
     product;
+
+  // Modal handlers
+  const openContactModal = () => setIsContactModalOpen(true);
+  const closeContactModal = () => setIsContactModalOpen(false);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -143,7 +150,10 @@ export default function Product() {
 
           {/* Call to action */}
           <div className="pt-2">
-            <button className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-blue-600">
+            <button
+              onClick={openContactModal}
+              className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-blue-600"
+            >
               Free Booking
             </button>
           </div>
@@ -257,7 +267,10 @@ export default function Product() {
 
           {/* Call to action */}
           <div className="pt-2">
-            <button className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-[#03539d]">
+            <button
+              onClick={openContactModal}
+              className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-[#03539d]"
+            >
               Free Booking
             </button>
           </div>
@@ -269,6 +282,9 @@ export default function Product() {
         <h2 className="mb-3 font-nunito text-2xl font-medium text-[#202020]">Description</h2>
         <p className="font-nunito text-[#202020]">{descriptionText}</p>
       </div>
+
+      {/* Contact Modal */}
+      <ContactModal isOpen={isContactModalOpen} onClose={closeContactModal} />
     </div>
   );
 }

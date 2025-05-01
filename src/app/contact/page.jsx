@@ -114,7 +114,7 @@ export default function Contact() {
       <div className="mb-16">
         <div className="h-[400px] w-full overflow-hidden rounded-lg">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3652.428323935756!2d90.40804557529997!3d23.72464348898434!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8f37ee384c3%3A0x88973150d7e28e4c!2sNawabpur%20Rd%2C%20Dhaka%201100!5e0!3m2!1sen!2sbd!4v1714599578778!5m2!1sen!2sbd"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29226.08587046777!2d90.40499302784065!3d23.70238133697383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b900730dd8bf%3A0xc63e89f4bfca8097!2sNAWABPUR%20COMPLEX!5e0!3m2!1sen!2sbd!4v1746101574907!5m2!1sen!2sbd"
             width="100%"
             height="400"
             style={{ border: 0 }}
