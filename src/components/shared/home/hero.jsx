@@ -54,7 +54,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <div className="bg-[#F6F6F6] py-10 sm:h-[70dvh] sm:py-0">
+    <div className="bg-[rgb(213,232,255)] py-10 sm:h-[70dvh] sm:py-0">
       <div className="grid h-full w-full grid-cols-1 items-center justify-between gap-4 md:grid-cols-12">
         <div className="min-w-full pl-4 text-left md:col-span-6 md:pl-10">
           <div
