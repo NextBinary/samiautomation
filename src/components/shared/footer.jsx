@@ -15,19 +15,17 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="py-8">
+    <footer className="px-4 py-8 lg:px-0">
       <div className="mx-auto w-[70%] border-t border-blue-200 py-6"></div>
       <div className="container mx-auto">
         <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2">
-          <div className="flex justify-center md:justify-start">
-            <div className="w-36">
-              <Image src={logo} alt="SAMI AUTOMATION" width={150} height={80} layout="responsive" />
-            </div>
+          <div className="w-28 lg:w-36">
+            <Image src={logo} alt="SAMI AUTOMATION" width={150} height={80} layout="responsive" />
           </div>
 
           <div className="space-y-6">
-            <div className="flex flex-col items-center justify-center gap-10 md:flex-row md:justify-start">
-              <div className="flex items-center justify-center gap-2 md:justify-start">
+            <div className="flex flex-col items-start justify-start gap-3 md:flex-row lg:gap-10">
+              <div className="flex items-start justify-start gap-2">
                 <PhoneCall className="text-[#0060B7]" />
                 <a
                   href="tel:+8801905888766"
@@ -48,26 +46,23 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="flex items-start justify-center gap-2 md:justify-start">
+            <div className="flex items-start justify-start gap-2">
               <MapPin className="text-[#0060B7]" />
               <span className="font-nunito text-lg font-light text-[#000000]">
                 Shop no: (01,02), level-4, Nawabpur Complex,
-                <br /> Nawabpur Road, Dhaka -1100
+                <span className="hidden md:inline">
+                  <br />
+                </span>
+                Nawabpur Road, Dhaka -1100
               </span>
             </div>
 
             {/* Social Media */}
             <div>
-              <h3 className="mb-3 text-center font-nunito text-lg font-medium text-[#000000] md:text-left">
+              <h3 className="mb-3 text-left font-nunito text-lg font-medium text-[#000000]">
                 Social Media
               </h3>
-              <div className="flex justify-center gap-3 md:justify-start">
-                <Link
-                  href="#"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white"
-                >
-                  <Facebook />
-                </Link>
+              <div className="flex justify-start gap-3">
                 <Link
                   href="#"
                   className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white"
@@ -86,12 +81,7 @@ export default function Footer() {
                 >
                   <Youtube />
                 </Link>
-                <Link
-                  href="#"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white"
-                >
-                  <Youtube />
-                </Link>
+
                 <Link
                   href="#"
                   className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-600 text-white"
