@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import img1 from "@/assets/images/logo.png";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -15,6 +16,10 @@ export default function Navbar() {
     { name: "Contact", path: "/contact" },
     { name: "About us", path: "/about" },
   ];
+
+  const handleLinkClick = () => {
+    setIsSheetOpen(false);
+  };
 
   return (
     <div className="sticky top-0 z-50 bg-white/70 shadow-sm backdrop-blur-md">
@@ -57,7 +62,7 @@ export default function Navbar() {
             <button className="bg-[#7676801F] px-4 py-2">🔍</button>
           </form>
           <div className="md:hidden">
-            <Sheet className>
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <button className="p-2 pr-4">
                   <Menu className="h-6 w-6" />
@@ -66,7 +71,7 @@ export default function Navbar() {
               <SheetContent side="left">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <div className="flex flex-col space-y-4 p-4">
-                  <Link href="/" className="mb-4">
+                  <Link href="/" className="mb-4" onClick={handleLinkClick}>
                     <Image src={img1} alt="Logo" width={100} height={40} priority />
                   </Link>
                   <ul className="flex flex-col space-y-4">
@@ -79,7 +84,9 @@ export default function Navbar() {
                             : "text-gray-700 hover:text-[#0060B7]"
                         }`}
                       >
-                        <Link href={link.path}>{link.name}</Link>
+                        <Link href={link.path} onClick={handleLinkClick}>
+                          {link.name}
+                        </Link>
                       </li>
                     ))}
                   </ul>
