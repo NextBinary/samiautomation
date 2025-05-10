@@ -8,7 +8,7 @@ export default function Categories() {
       <h2 className="mb-8 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
         All Categories store Section
       </h2>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
         {categories.map((category) => (
           <CardCategory
             key={category.id}
@@ -18,12 +18,12 @@ export default function Categories() {
           />
         ))}
       </div>
-      <div className="my-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="my-6 grid grid-cols-2 gap-3 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
         {categories.map((category) => (
           <CardCategory key={category.id} title={category.title} image={category.image} />
         ))}
       </div>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
         {categories.map((category) => (
           <CardCategory key={category.id} title={category.title} image={category.image} />
         ))}
