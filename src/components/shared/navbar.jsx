@@ -21,7 +21,14 @@ export default function Navbar() {
       <nav className="container mx-auto flex items-center justify-between py-4">
         <div className="flex w-[20%] items-center">
           <Link href="/">
-            <Image src={img1} alt="Logo" className="pl-4" width={100} height={40} priority />
+            <Image
+              src={img1}
+              alt="Logo"
+              className="pl-4 lg:pl-0"
+              width={100}
+              height={40}
+              priority
+            />
           </Link>
         </div>
         <div className="hidden w-[60%] justify-center md:flex">

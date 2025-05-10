@@ -6,8 +6,8 @@ import {
   Facebook,
   Instagram,
   Linkedin,
-  Locate,
   MailIcon,
+  MapPin,
   MarsStroke,
   PhoneCall,
   Youtube,
@@ -20,13 +20,13 @@ export default function Footer() {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2">
           <div className="flex justify-center md:justify-start">
-            <div className="w-40">
+            <div className="w-36">
               <Image src={logo} alt="SAMI AUTOMATION" width={150} height={80} layout="responsive" />
             </div>
           </div>
 
           <div className="space-y-6">
-            <div className="flex-col items-center justify-center gap-10 md:flex md:justify-start">
+            <div className="flex flex-col items-center justify-center gap-10 md:flex-row md:justify-start">
               <div className="flex items-center justify-center gap-2 md:justify-start">
                 <PhoneCall className="text-[#0060B7]" />
                 <a
@@ -48,10 +48,11 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-2 md:justify-start">
-              <Locate className="text-[#0060B7]" />
+            <div className="flex items-start justify-center gap-2 md:justify-start">
+              <MapPin className="text-[#0060B7]" />
               <span className="font-nunito text-lg font-light text-[#000000]">
-                Shop no: (01,02), level-4, Nawabpur Complex, Nawabpur Road, Dhaka -1100
+                Shop no: (01,02), level-4, Nawabpur Complex,
+                <br /> Nawabpur Road, Dhaka -1100
               </span>
             </div>
 
