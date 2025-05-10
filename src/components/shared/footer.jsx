@@ -26,7 +26,7 @@ export default function Footer() {
           </div>
 
           <div className="space-y-6">
-            <div className="flex items-center justify-center gap-10 md:justify-start">
+            <div className="flex-col items-center justify-center gap-10 md:flex md:justify-start">
               <div className="flex items-center justify-center gap-2 md:justify-start">
                 <PhoneCall className="text-[#0060B7]" />
                 <a
@@ -51,7 +51,7 @@ export default function Footer() {
             <div className="flex items-center justify-center gap-2 md:justify-start">
               <Locate className="text-[#0060B7]" />
               <span className="font-nunito text-lg font-light text-[#000000]">
-                Shop no: (01,02), level-4, Nawabpur Complex, <br /> Nawabpur Road, Dhaka -1100
+                Shop no: (01,02), level-4, Nawabpur Complex, Nawabpur Road, Dhaka -1100
               </span>
             </div>
 
