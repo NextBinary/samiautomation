@@ -14,7 +14,7 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="overflow-hidden rounded-lg border border-[#B4B4B4]">
-      <div className="p-2">
+      <div className="p-1 lg:p-2">
         <div className="relative aspect-[4/3] overflow-hidden rounded-md">
           <Image
             src={image}
@@ -23,17 +23,19 @@ export default function ProductCard({ product }) {
             className="rounded-md object-cover transition-transform duration-300 ease-in-out hover:scale-125 group-hover:scale-125"
           />
         </div>
-        <p className="pt-2 font-nunito text-xs font-light text-[#64748B]">
+        <p className="pt-2 font-nunito text-[10px] font-light text-[#64748B] md:text-xs">
           Color {colors} available
         </p>
-        <h3 className="my-1 font-nunito text-xl font-medium text-[#191D23]">
-          {title.length > 25 ? `${title.slice(0, 25)} ...` : title}
+        <h3 className="my-1 font-nunito text-base font-medium text-[#191D23] md:text-xl">
+          {title.length > 20 ? `${title.slice(0, 20)}...` : title}
         </h3>
-        <div className="my-3 flex items-center justify-between">
+        <div className="my-1 flex items-center justify-between lg:my-3">
           <p>
-            <span className="text-xl font-semibold text-[#191D23]">৳{price.toFixed(1)}</span>
+            <span className="text-sm font-semibold text-[#191D23] md:text-base lg:text-xl">
+              ৳{price.toFixed(1)}
+            </span>
             {hasDiscount && discountPrice && (
-              <span className="ml-4 text-base font-light text-[#191D23] line-through">
+              <span className="ml-1 text-xs font-light text-[#191D23] line-through md:ml-4 md:text-base">
                 ৳{discountPrice.toFixed(1)}
               </span>
             )}
@@ -41,7 +43,7 @@ export default function ProductCard({ product }) {
           <ButtonBlue
             title={"Book Now"}
             handler={`/product/${product.id}`}
-            className="w-28 whitespace-nowrap"
+            className="w-20 whitespace-nowrap px-1 py-1 lg:w-28 lg:px-4 lg:py-2"
           />
         </div>
       </div>

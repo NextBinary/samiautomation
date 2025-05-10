@@ -63,20 +63,22 @@ export default function Hero() {
               opacity: fade ? 1 : 0,
             }}
           >
-            <p className="mb-2 text-left font-nunito text-base font-medium text-[#0060B7]">
+            <p className="mb-2 text-center font-nunito text-base font-medium text-[#0060B7] md:text-left">
               {heroTexts[currentIndex].topHeading}
             </p>
-            <div className="mb-4 text-left font-nunito text-3xl font-normal sm:text-4xl md:text-5xl">
+            <div className="mb-4 text-center font-nunito text-3xl font-normal sm:text-4xl md:text-left md:text-5xl">
               <span className="text-black">{heroTexts[currentIndex].titlePart1} </span>
               <br className="md:hidden" />
               <span className="font-nunito text-[#0060B7]">
                 {heroTexts[currentIndex].titlePart2}
               </span>
             </div>
-            <p className="mx-0 mb-5 max-w-lg text-left font-nunito text-base font-light text-gray-700 sm:text-lg">
+            <p className="mx-0 mb-5 max-w-lg text-center font-nunito text-base font-light text-gray-700 sm:text-lg md:text-left">
               {heroTexts[currentIndex].description}
             </p>
-            <ButtonBlue title={"Shop Now"} />
+            <div className="text-center md:text-left">
+              <ButtonBlue title={"Shop Now"} />
+            </div>
           </div>
         </div>
         {/* Right side - Animated Image */}

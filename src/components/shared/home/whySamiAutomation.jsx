@@ -41,8 +41,8 @@ export default function WhySamiAutomation() {
   ];
 
   return (
-    <section className="my-24">
-      <h2 className="mb-10 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
+    <section className="my-12 px-4 lg:my-24 lg:px-0">
+      <h2 className="mb-6 text-center font-nunito text-2xl font-light text-[#202020] sm:mb-8 sm:text-3xl md:mb-10 md:text-left md:text-4xl">
         Why Sami Automation
       </h2>
 

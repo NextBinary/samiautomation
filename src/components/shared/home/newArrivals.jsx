@@ -30,21 +30,21 @@ export default function NewArrivals() {
   ];
 
   return (
-    <section className="mt-24">
-      <h2 className="mb-8 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
+    <section className="mt-12 px-2 lg:mt-24 lg:px-0">
+      <h2 className="mb-6 text-center font-nunito text-2xl font-light text-[#202020] sm:mb-8 sm:text-3xl md:mb-10 md:text-left md:text-4xl">
         New Arrivals
       </h2>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+      <div className="grid grid-cols-4 gap-2 lg:gap-6">
         {/* First item (large) */}
-        <div className="overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg md:col-span-2 md:row-span-2">
+        <div className="col-span-2 row-span-2 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
           <div className="h-full">
             <Image src={img1} alt={`Product 1`} className="h-full w-full object-cover" />
           </div>
         </div>
 
         {/* Second item (top right - full width) */}
-        <div className="overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg md:col-span-2">
+        <div className="col-span-2 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
           <div className="h-full">
             <Image
               src={products.find((p) => p.serial === 2)?.image}
@@ -55,7 +55,7 @@ export default function NewArrivals() {
         </div>
 
         {/* Third item (bottom right - half width) */}
-        <div className="overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg md:col-span-1">
+        <div className="col-span-1 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
           <div className="h-full">
             <Image
               src={products.find((p) => p.serial === 3)?.image}
@@ -66,7 +66,7 @@ export default function NewArrivals() {
         </div>
 
         {/* Fourth item (bottom right - half width) */}
-        <div className="overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg md:col-span-1">
+        <div className="col-span-1 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
           <div className="h-full">
             <Image
               src={products.find((p) => p.serial === 4)?.image}

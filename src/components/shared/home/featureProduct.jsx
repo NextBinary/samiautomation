@@ -72,11 +72,11 @@ export const products = [
 export default function FeatureProduct() {
   return (
     <section className="">
-      <h2 className="mb-8 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
+      <h2 className="mb-6 text-center font-nunito text-2xl font-light text-[#202020] sm:mb-8 sm:text-3xl md:mb-10 md:text-left md:text-4xl">
         Best Selling Products
       </h2>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 px-2 sm:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

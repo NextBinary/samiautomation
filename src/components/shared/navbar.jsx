@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import img1 from "@/assets/images/logo.png";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 
 export default function Navbar() {
@@ -57,6 +57,7 @@ export default function Navbar() {
                 </button>
               </SheetTrigger>
               <SheetContent side="left">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <div className="flex flex-col space-y-4 p-4">
                   <Link href="/" className="mb-4">
                     <Image src={img1} alt="Logo" width={100} height={40} priority />
