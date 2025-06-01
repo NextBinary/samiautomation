@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import required modules
 import { Autoplay, Pagination } from "swiper/modules";
@@ -12,38 +12,39 @@ import Image from "next/image";
 export default function Testimonials() {
   const swiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [testimonials, setTestimonials] = useState([]);
 
-  // Sample testimonial data - replace with your actual data
-  const testimonials = [
-    {
-      id: 1,
-      name: "Floyd Miles",
-      image:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image path
-      text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make",
-    },
-    {
-      id: 2,
-      name: "Ronald Richards",
-      image:
-        "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image path
-      text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make",
-    },
-    {
-      id: 3,
-      name: "Savannah Nguyen",
-      image:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image path
-      text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make",
-    },
-    {
-      id: 4,
-      name: "KIM CHen",
-      image:
-        "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2960&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Replace with actual image path
-      text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make",
-    },
-  ];
+  const fetchTestimonialsData = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/testimonials`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const activeTestimonials = result.data
+          .filter((item) => item.isActive)
+          .map((item) => ({
+            id: item._id,
+            name: item.name,
+            image: `${process.env.NEXT_PUBLIC_SPACE_URL}${item.image}`,
+            text: item.text || item.description,
+          }));
+
+        setTestimonials(activeTestimonials);
+      }
+    } catch (error) {
+      console.error("Failed to fetch testimonials data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTestimonialsData();
+  }, []);
+
+  if (testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <div className="testi_background_Image container-fluid relative my-20 w-full overflow-hidden py-16 lg:py-24">

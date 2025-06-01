@@ -1,57 +1,61 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import hero from "@/assets/images/hero.png";
-import hero2 from "@/assets/images/hero2.png";
 import Image from "next/image";
 import ButtonBlue from "../button";
 
 export default function Hero() {
-  const heroTexts = [
-    {
-      topHeading: "NEW ARRIVALS",
-      titlePart1: "BEST SLOTTED",
-      titlePart2: "ANGLE RACK",
-      description: "Sturdy, Customizable & Cost-Effective Solutions for Every Space.",
-    },
-    {
-      topHeading: "FEATURED PRODUCTS",
-      titlePart1: "HEAVY DUTY",
-      titlePart2: "PALLET RACK",
-      description: "Best Slotted Angle Racks in the market.",
-    },
-    {
-      topHeading: "TOP SELLING",
-      titlePart1: "STORAGE",
-      titlePart2: "SOLUTIONS",
-      description: "Our team is here to help you succeed.",
-    },
-    {
-      topHeading: "SPECIAL OFFER",
-      titlePart1: "QUALITY",
-      titlePart2: "SHELVING",
-      description: "Excellence in every interaction.",
-    },
-  ];
-
-  const heroImages = [hero, hero2, hero, hero2];
-
+  const [carouselData, setCarouselData] = useState([]);
   const [fade, setFade] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Start fade out
-      setFade(false);
+  const fetchCarouselData = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/carousel`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
 
-      // Wait for fade out, then change content and fade in
+      if (result.data && result.data.length > 0) {
+        const activeCarousels = result.data
+          .filter((item) => item.isActive)
+          .map((item) => ({
+            heading: item.heading,
+            title1: item.title1,
+            title2: item.title2,
+            description: item.description,
+            image: `${process.env.NEXT_PUBLIC_SPACE_URL}${item.image}`,
+          }));
+
+        setCarouselData(activeCarousels);
+      }
+    } catch (error) {
+      console.error("Failed to fetch carousel data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCarouselData();
+  }, []);
+
+  useEffect(() => {
+    if (carouselData.length === 0) return;
+
+    const interval = setInterval(() => {
+      setFade(false);
       setTimeout(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % heroTexts.length);
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselData.length);
         setFade(true);
-      }, 500); // Half of transition time
-    }, 4000); // Total time for each slide
+      }, 500);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [carouselData.length]);
+
+  if (carouselData.length === 0) {
+    return null;
+  }
+
+  const currentCarousel = carouselData[currentIndex];
 
   return (
     <div className="bg-[rgb(213,232,255)] py-10 sm:h-[70dvh] sm:py-0">
@@ -64,17 +68,15 @@ export default function Hero() {
             }}
           >
             <p className="mb-2 text-center font-nunito text-base font-medium text-[#0060B7] md:text-left">
-              {heroTexts[currentIndex].topHeading}
+              {currentCarousel.heading}
             </p>
             <div className="mb-4 text-center font-nunito text-3xl font-normal sm:text-4xl md:text-left md:text-5xl">
-              <span className="text-black">{heroTexts[currentIndex].titlePart1} </span>
+              <span className="text-black">{currentCarousel.title1} </span>
               <br className="md:hidden" />
-              <span className="font-nunito text-[#0060B7]">
-                {heroTexts[currentIndex].titlePart2}
-              </span>
+              <span className="font-nunito text-[#0060B7]">{currentCarousel.title2}</span>
             </div>
             <p className="mx-0 mb-5 max-w-lg text-center font-nunito text-base font-light text-gray-700 sm:text-lg md:text-left">
-              {heroTexts[currentIndex].description}
+              {currentCarousel.description}
             </p>
             <div className="text-center md:text-left">
               <ButtonBlue title={"Shop Now"} />
@@ -88,7 +90,7 @@ export default function Hero() {
             style={{ opacity: fade ? 1 : 0 }}
           >
             <Image
-              src={heroImages[currentIndex]}
+              src={currentCarousel.image}
               alt="Hero"
               width={500}
               height={500}

@@ -1,33 +1,41 @@
-import img1 from "@/assets/images/grid-item-1.png";
-import img2 from "@/assets/images/grid-item-2.png";
-import img3 from "@/assets/images/grid-item-3.png";
-import img4 from "@/assets/images/grid-item-4.png";
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function NewArrivals() {
-  // Products array with serial numbers for sorting
-  const products = [
-    {
-      id: 1,
-      serial: 1,
-      image: img1,
-    },
-    {
-      id: 2,
-      serial: 2,
-      image: img2,
-    },
-    {
-      id: 3,
-      serial: 3,
-      image: img3,
-    },
-    {
-      id: 4,
-      serial: 4,
-      image: img4,
-    },
-  ];
+  const [products, setProducts] = useState([]);
+
+  const fetchArrivalsData = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/arrivals`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const activeArrivals = result.data
+          .filter((item) => item.isActive)
+          .map((item) => ({
+            id: item._id,
+            serial: item.serial,
+            image: `${process.env.NEXT_PUBLIC_SPACE_URL}${item.image}`,
+          }))
+          .sort((a, b) => a.serial - b.serial);
+
+        setProducts(activeArrivals);
+      }
+    } catch (error) {
+      console.error("Failed to fetch arrivals data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchArrivalsData();
+  }, []);
+
+  if (products.length === 0) {
+    return null;
+  }
 
   return (
     <section className="mt-12 px-2 lg:mt-24 lg:px-0">
@@ -39,7 +47,13 @@ export default function NewArrivals() {
         {/* First item (large) */}
         <div className="col-span-2 row-span-2 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
           <div className="h-full">
-            <Image src={img1} alt={`Product 1`} className="h-full w-full object-cover" />
+            <Image
+              src={products.find((p) => p.serial === 1)?.image}
+              alt={`Product 1`}
+              className="h-full w-full object-cover"
+              width={500}
+              height={500}
+            />
           </div>
         </div>
 
@@ -50,6 +64,8 @@ export default function NewArrivals() {
               src={products.find((p) => p.serial === 2)?.image}
               alt={`Product 2`}
               className="h-full w-full object-cover"
+              width={500}
+              height={250}
             />
           </div>
         </div>
@@ -61,6 +77,8 @@ export default function NewArrivals() {
               src={products.find((p) => p.serial === 3)?.image}
               alt={`Product 3`}
               className="h-full w-full object-cover"
+              width={250}
+              height={250}
             />
           </div>
         </div>
@@ -72,6 +90,8 @@ export default function NewArrivals() {
               src={products.find((p) => p.serial === 4)?.image}
               alt={`Product 4`}
               className="h-full w-full object-cover"
+              width={250}
+              height={250}
             />
           </div>
         </div>

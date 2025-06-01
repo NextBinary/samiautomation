@@ -1,6 +1,39 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 
 export default function Contact() {
+  const [contactInfo, setContactInfo] = useState({
+    email: "",
+    phone: "",
+    address: "",
+  });
+
+  const fetchContactInfo = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contactinfo`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const contact = result.data.find((item) => item.isActive);
+        if (contact) {
+          setContactInfo({
+            email: contact.email,
+            phone: contact.phone,
+            address: contact.address,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch contact info:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchContactInfo();
+  }, []);
+
   return (
     <div className="mx-auto py-8 lg:py-16">
       <div className="mb-5 text-center lg:mb-12">
@@ -24,23 +57,17 @@ export default function Contact() {
             <div className="space-y-6">
               <div className="flex items-center">
                 <span className="mr-4">✉️</span>
-                <span className="font-nunito text-lg">samiautomationltd@gmail.com</span>
+                <span className="font-nunito text-lg">{contactInfo.email}</span>
               </div>
 
               <div className="flex items-center">
                 <span className="mr-4">📞</span>
-                <span className="font-nunito text-lg">01905888766</span>
+                <span className="font-nunito text-lg">{contactInfo.phone}</span>
               </div>
 
               <div className="flex items-start">
                 <span className="mr-4">📍</span>
-                <span className="font-nunito text-lg">
-                  Sami automation Nawabpur Complex,
-                  <span className="hidden md:inline">
-                    <br />
-                  </span>
-                  Nawabpur Rd, Dhaka -1100
-                </span>
+                <span className="font-nunito text-lg">{contactInfo.address}</span>
               </div>
             </div>
 

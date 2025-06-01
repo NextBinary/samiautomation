@@ -1,44 +1,40 @@
-import box from "@/assets/images/box.png";
-import car from "@/assets/images/car.png";
-import card from "@/assets/images/card.png";
-import file from "@/assets/images/file.png";
-import headphone from "@/assets/images/headphone.png";
-import world from "@/assets/images/world.png";
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function WhySamiAutomation() {
-  const features = [
-    {
-      icon: headphone,
-      title: "CUSTOMER CARE",
-      description: "Sami automation Has customer care service",
-    },
-    {
-      icon: car,
-      title: "HOME DELIVERY",
-      description: "Sami automation provide fastest Home Delivery All Over bangladesh",
-    },
-    {
-      icon: card,
-      title: "FAST PAYMENT",
-      description: "All king of E-Payment for online order",
-    },
-    {
-      icon: file,
-      title: "ONE YEAR WARRANTY",
-      description: "Sami automation provide one year service Warranty for all Product",
-    },
-    {
-      icon: box,
-      title: "AFTER SALES SERVICE",
-      description: "Sami automation dedicate team available for your service 24/7",
-    },
-    {
-      icon: world,
-      title: "ASSEMBLING & SHIFTING",
-      description: "Expert team ready for assembling & shifting service",
-    },
-  ];
+  const [features, setFeatures] = useState([]);
+
+  const fetchWhySamiAutomationData = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/whysamiautomation`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const activeFeatures = result.data
+          .filter((item) => item.isActive)
+          .map((item) => ({
+            icon: `${process.env.NEXT_PUBLIC_SPACE_URL}${item.image}`,
+            title: item.title,
+            description: item.description,
+          }));
+
+        setFeatures(activeFeatures);
+      }
+    } catch (error) {
+      console.error("Failed to fetch whySamiAutomation data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchWhySamiAutomationData();
+  }, []);
+
+  if (features.length === 0) {
+    return null;
+  }
 
   return (
     <section className="my-12 px-4 lg:my-24 lg:px-0">

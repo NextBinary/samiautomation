@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
@@ -14,6 +15,68 @@ import {
 } from "lucide-react";
 
 export default function Footer() {
+  const [contactInfo, setContactInfo] = useState({
+    email: "",
+    phone: "",
+    address: "",
+  });
+  const [socialMedia, setSocialMedia] = useState([]);
+
+  const fetchContactInfo = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contactinfo`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const contact = result.data.find((item) => item.isActive);
+        if (contact) {
+          setContactInfo({
+            email: contact.email,
+            phone: contact.phone,
+            address: contact.address,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch contact info:", error);
+    }
+  };
+
+  const fetchSocialMedia = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/social`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const activeSocial = result.data
+          .filter((item) => item.isActive)
+          .map((item) => ({
+            id: item._id,
+            name: item.name,
+            url: item.url,
+            logo: `${process.env.NEXT_PUBLIC_SPACE_URL}${item.logo}`,
+            slug: item.slug,
+          }));
+        setSocialMedia(activeSocial);
+      }
+    } catch (error) {
+      console.error("Failed to fetch social media:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchContactInfo();
+    fetchSocialMedia();
+  }, []);
+
+  const formatAddress = (address) => {
+    return address.replace("Nawabpur Road", "\nNawabpur Road");
+  };
+
   return (
     <footer className="px-4 py-8 lg:px-0">
       <div className="mx-auto w-[70%] border-t border-blue-200 py-6"></div>
@@ -28,20 +91,20 @@ export default function Footer() {
               <div className="flex items-start justify-start gap-2">
                 <PhoneCall className="text-[#0060B7]" />
                 <a
-                  href="tel:+8801905888766"
+                  href={`tel:${contactInfo.phone}`}
                   className="font-nunito text-lg font-light text-[#000000] hover:underline"
                 >
-                  01905888766
+                  {contactInfo.phone}
                 </a>
               </div>
 
               <div className="flex items-center justify-center gap-2 md:justify-start">
                 <MailIcon className="text-[#0060B7]" />
                 <a
-                  href="mailto:samiautomationltd@gmail.com"
+                  href={`mailto:${contactInfo.email}`}
                   className="font-nunito text-lg font-light text-[#000000] hover:underline"
                 >
-                  samiautomationltd@gmail.com
+                  {contactInfo.email}
                 </a>
               </div>
             </div>
@@ -49,11 +112,11 @@ export default function Footer() {
             <div className="flex items-start justify-start gap-2">
               <MapPin className="text-[#0060B7]" />
               <span className="font-nunito text-lg font-light text-[#000000]">
-                Shop no: (01,02), level-4, Nawabpur Complex,
+                {contactInfo.address.split("Nawabpur Road")[0]}
                 <span className="hidden md:inline">
                   <br />
                 </span>
-                Nawabpur Road, Dhaka -1100
+                Nawabpur Road{contactInfo.address.split("Nawabpur Road")[1]}
               </span>
             </div>
 
@@ -63,31 +126,23 @@ export default function Footer() {
                 Social Media
               </h3>
               <div className="flex justify-start gap-3">
-                <Link
-                  href="#"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white"
-                >
-                  <Linkedin />
-                </Link>
-                <Link
-                  href="#"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white"
-                >
-                  <Facebook />
-                </Link>
-                <Link
-                  href="#"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white"
-                >
-                  <Youtube />
-                </Link>
-
-                <Link
-                  href="#"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-600 text-white"
-                >
-                  <Instagram />
-                </Link>
+                {socialMedia.map((social) => (
+                  <Link
+                    key={social.id}
+                    href={social.url.startsWith("http") ? social.url : `https://${social.url}`}
+                    className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Image
+                      src={social.logo}
+                      alt={social.name}
+                      width={32}
+                      height={32}
+                      className="h-full w-full object-cover"
+                    />
+                  </Link>
+                ))}
               </div>
             </div>
           </div>

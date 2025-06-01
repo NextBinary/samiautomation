@@ -1,34 +1,42 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import CardCategory from "../cards/categoryCard";
-// Sample category data
-export const categories = [
-  {
-    id: 1,
-    title: "Clothing Store",
-    image:
-      "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 2,
-    title: "Pharmacy Store",
-    image:
-      "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 3,
-    title: "Shoe Store",
-    image:
-      "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-  {
-    id: 4,
-    title: "Gadget Store",
-    image:
-      "https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-  },
-];
 
 export default function TopCategories() {
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategoriesData = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories?all=true`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const activeCategories = result.data
+          .filter((item) => item.isActive && item.isFeatured)
+          .map((item) => ({
+            id: item._id,
+            title: item.name,
+            image: `${process.env.NEXT_PUBLIC_SPACE_URL}${item.image}`,
+            slug: item.slug,
+          }));
+
+        setCategories(activeCategories);
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategoriesData();
+  }, []);
+
+  if (categories.length === 0) {
+    return null;
+  }
+
   return (
     <div className="my-12 sm:my-16 md:my-20 lg:my-24">
       <div className="container mx-auto bg-[#F6F6F6] px-3 py-4 sm:px-4 sm:py-5 md:py-6">
