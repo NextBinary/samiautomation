@@ -66,7 +66,7 @@ export default function Products() {
 
   if (products.length === 0) {
     return (
-      <div className="mt-10 px-2 lg:px-0">
+      <div className="mt-10 flex h-[60dvh] items-center justify-center px-2 lg:px-0">
         <div className="text-center">
           <h2 className="mb-4 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
             No Products Found

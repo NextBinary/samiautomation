@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function Contact() {
   const [contactInfo, setContactInfo] = useState({
@@ -7,6 +8,16 @@ export default function Contact() {
     phone: "",
     address: "",
   });
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchContactInfo = async () => {
     try {
@@ -27,6 +38,57 @@ export default function Contact() {
       }
     } catch (error) {
       console.error("Failed to fetch contact info:", error);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/contact request/insertFormData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email,
+            phone: formData.phone,
+            message: formData.message,
+            recipients: contactInfo.email,
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success("Message sent successfully! We will contact you soon.");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          message: "",
+        });
+      } else {
+        toast.error(result.message || "Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error("Contact form submission error:", error);
+      toast.error("Network error. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,21 +144,33 @@ export default function Contact() {
 
           {/* Contact Form */}
           <div className="col-span-5 lg:col-span-3">
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block font-nunito text-gray-600">First Name</label>
+                  <label className="mb-2 block font-nunito text-gray-600">
+                    First Name <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
+                    name="firstName"
                     placeholder="First Name"
+                    required
+                    value={formData.firstName}
+                    onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2 font-nunito focus:border-blue-500 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block font-nunito text-gray-600">Last Name</label>
+                  <label className="mb-2 block font-nunito text-gray-600">
+                    Last Name <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
-                    placeholder="Doe"
+                    name="lastName"
+                    placeholder="Last Name"
+                    required
+                    value={formData.lastName}
+                    onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2 font-nunito focus:border-blue-500 focus:outline-none"
                   />
                 </div>
@@ -104,28 +178,46 @@ export default function Contact() {
 
               <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block font-nunito text-gray-600">Email</label>
+                  <label className="mb-2 block font-nunito text-gray-600">
+                    Email <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="email"
+                    name="email"
                     placeholder="Email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2 font-nunito focus:border-blue-500 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block font-nunito text-gray-600">Phone Number</label>
+                  <label className="mb-2 block font-nunito text-gray-600">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="tel"
+                    name="phone"
                     placeholder="+880"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2 font-nunito focus:border-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="mb-4">
-                <label className="mb-2 block font-nunito text-gray-600">Message</label>
+                <label className="mb-2 block font-nunito text-gray-600">
+                  Message <span className="text-red-500">*</span>
+                </label>
                 <textarea
+                  name="message"
                   placeholder="Write your message.."
                   rows="2"
+                  required
+                  value={formData.message}
+                  onChange={handleChange}
                   className="w-full border-b border-gray-300 py-2 font-nunito focus:border-blue-500 focus:outline-none"
                 ></textarea>
               </div>
@@ -133,9 +225,10 @@ export default function Contact() {
               <div className="text-center lg:text-left">
                 <button
                   type="submit"
-                  className="rounded-md bg-[#0060B7] px-4 py-2 font-nunito text-white hover:bg-[#00509E] lg:px-8 lg:py-3"
+                  disabled={isSubmitting}
+                  className="rounded-md bg-[#0060B7] px-4 py-2 font-nunito text-white hover:bg-[#00509E] disabled:opacity-50 lg:px-8 lg:py-3"
                 >
-                  Send Message
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </button>
               </div>
             </form>

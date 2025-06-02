@@ -143,15 +143,15 @@ export default function Navbar() {
         </div>
         <div className="flex w-[20%] justify-end">
           <div className="relative hidden md:block" ref={searchRef}>
-            <form className="flex items-center rounded-md border bg-[#7676801F]">
+            <form className="flex items-center rounded-md border bg-[rgb(213,232,255)]">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="border-none bg-[#7676801F] px-4 py-2 text-gray-900 placeholder:text-[#3C3C4399] focus:outline-none"
+                className="border-none bg-[rgb(213,232,255)] px-4 py-2 text-gray-900 placeholder:text-[#3C3C4399] focus:outline-none"
                 placeholder="Search products..."
               />
-              <button type="button" className="bg-[#7676801F] px-4 py-2">
+              <button type="button" className="bg-[rgb(213,232,255)] px-4 py-2">
                 {loading ? "..." : "🔍"}
               </button>
             </form>

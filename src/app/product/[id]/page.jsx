@@ -2,15 +2,22 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import ButtonBlue from "@/components/shared/button";
-import ContactModal from "@/components/shared/ui/ContactModal";
+// import ContactModal from "@/components/shared/ui/ContactModal";
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Product() {
   const params = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isBookingFormOpen, setIsBookingFormOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contactInfo, setContactInfo] = useState({
+    email: "",
+    phone: "",
+    address: "",
+  });
 
   const fetchProduct = async () => {
     try {
@@ -55,14 +62,71 @@ export default function Product() {
     }
   };
 
+  const fetchContactInfo = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contactinfo`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const contact = result.data.find((item) => item.isActive);
+        if (contact) {
+          setContactInfo({
+            email: contact.email,
+            phone: contact.phone,
+            address: contact.address,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch contact info:", error);
+    }
+  };
+
   useEffect(() => {
     if (params.id) {
       fetchProduct();
     }
+    fetchContactInfo();
   }, [params.id]);
 
-  const openContactModal = () => setIsContactModalOpen(true);
-  const closeContactModal = () => setIsContactModalOpen(false);
+  // Add booking form submission function
+  const submitBookingForm = async (formData) => {
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking/insertFormData`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          product: product.name,
+          isBooking: true,
+          recipients: contactInfo.email,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success("Booking submitted successfully! We will contact you soon.");
+        setIsBookingFormOpen(false);
+      } else {
+        toast.error(result.message || "Failed to submit booking. Please try again.");
+      }
+    } catch (error) {
+      console.error("Booking submission error:", error);
+      toast.error("Network error. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const openBookingForm = () => setIsBookingFormOpen(true);
+  const closeBookingForm = () => setIsBookingFormOpen(false);
 
   if (loading) {
     return (
@@ -170,7 +234,7 @@ export default function Product() {
           {/* Call to action */}
           <div className="pt-2">
             <button
-              onClick={openContactModal}
+              onClick={openBookingForm}
               className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-blue-600"
             >
               Free Booking
@@ -253,7 +317,7 @@ export default function Product() {
           {/* Call to action */}
           <div className="pt-2">
             <button
-              onClick={openContactModal}
+              onClick={openBookingForm}
               className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-[#03539d]"
             >
               Free Booking
@@ -271,8 +335,130 @@ export default function Product() {
         />
       </div>
 
-      {/* Contact Modal */}
-      <ContactModal isOpen={isContactModalOpen} onClose={closeContactModal} />
+      {/* Booking Form Modal */}
+      {isBookingFormOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="mx-4 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-[#202020]">Book Product: {product.name}</h2>
+              <button onClick={closeBookingForm} className="text-gray-500 hover:text-gray-700">
+                ✕
+              </button>
+            </div>
+
+            <BookingForm
+              onSubmit={submitBookingForm}
+              isSubmitting={isSubmitting}
+              onClose={closeBookingForm}
+            />
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+// Booking Form Component
+function BookingForm({ onSubmit, isSubmitting, onClose }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
+          Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          value={formData.name}
+          onChange={handleChange}
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0060B7]"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
+          Email <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          value={formData.email}
+          onChange={handleChange}
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0060B7]"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="phone" className="mb-1 block text-sm font-medium text-gray-700">
+          Phone <span className="text-red-500">*</span>
+        </label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          required
+          value={formData.phone}
+          onChange={handleChange}
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0060B7]"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="message" className="mb-1 block text-sm font-medium text-gray-700">
+          Message <span className="text-red-500">*</span>
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          rows="3"
+          required
+          value={formData.message}
+          onChange={handleChange}
+          placeholder="Tell us about your requirements..."
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0060B7]"
+        />
+      </div>
+
+      <div className="flex gap-3 pt-4">
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
+          disabled={isSubmitting}
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="flex-1 rounded-md bg-[#0060B7] px-4 py-2 text-white hover:bg-[#03539d] disabled:opacity-50"
+        >
+          {isSubmitting ? "Submitting..." : "Submit Booking"}
+        </button>
+      </div>
+    </form>
   );
 }
