@@ -1,10 +1,36 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 export default function WhatsAppButton() {
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  // Fetch phone number from contact info API
+  const fetchPhoneNumber = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contactinfo`, {
+        cache: "no-store",
+      });
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        const contact = result.data.find((item) => item.isActive);
+        if (contact && contact.phone) {
+          // Remove any non-digit characters and ensure it's in international format
+          const cleanPhone = contact.phone.replace(/\D/g, "");
+          setPhoneNumber(cleanPhone);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch contact info:", error);
+      // Keep using fallback number if API fails
+    }
+  };
+
+  useEffect(() => {
+    fetchPhoneNumber();
+  }, []);
+
   const handleWhatsAppClick = () => {
-    // Replace with your WhatsApp number (international format without '+')
-    const phoneNumber = "8801905888766"; // Using the phone number from the footer
     const url = `https://wa.me/${phoneNumber}`;
     window.open(url, "_blank");
   };
@@ -12,7 +38,7 @@ export default function WhatsAppButton() {
   return (
     <button
       onClick={handleWhatsAppClick}
-      className="fixed bottom-32 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl lg:right-20"
+      className="fixed bottom-32 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl lg:right-20"
       aria-label="Contact us on WhatsApp"
     >
       <svg

@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import ButtonBlue from "@/components/shared/button";
-// import ContactModal from "@/components/shared/ui/ContactModal";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -285,37 +283,41 @@ export default function Product() {
         </div>
 
         {/* Right column - Product details */}
-        <div className="col-span-5 flex flex-col space-y-6">
-          <h1 className="font-nunito text-4xl font-bold text-[#202020]">{name}</h1>
+        <div className="col-span-5 flex h-full flex-col space-y-6">
+          <div className="flex flex-1 flex-col space-y-6">
+            <h1 className="font-nunito text-4xl font-bold text-[#202020]">{name}</h1>
 
-          {/* Pricing */}
-          <div className="flex items-center">
-            <span className="font-nunito text-4xl font-bold text-[#202020]">৳{currentPrice}</span>
-            <span className="ml-4 font-nunito text-xl text-gray-500 line-through">
-              ৳{originalPrice}
-            </span>
+            {/* Pricing */}
+            <div className="flex items-center">
+              <span className="font-nunito text-4xl font-bold text-[#202020]">৳{currentPrice}</span>
+              <span className="ml-4 font-nunito text-xl text-gray-500 line-through">
+                ৳{originalPrice}
+              </span>
+            </div>
+
+            {/* Key Features */}
+            <div>
+              <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">Key Features:</h2>
+              <div
+                className="font-nunito text-[#202020]"
+                dangerouslySetInnerHTML={{ __html: features }}
+              />
+            </div>
+
+            {/* Specifications */}
+            <div>
+              <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">
+                Specifications:
+              </h2>
+              <div
+                className="font-nunito text-[#202020]"
+                dangerouslySetInnerHTML={{ __html: specifications }}
+              />
+            </div>
           </div>
 
-          {/* Key Features */}
-          <div>
-            <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">Key Features:</h2>
-            <div
-              className="font-nunito text-[#202020]"
-              dangerouslySetInnerHTML={{ __html: features }}
-            />
-          </div>
-
-          {/* Specifications */}
-          <div>
-            <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">Specifications:</h2>
-            <div
-              className="font-nunito text-[#202020]"
-              dangerouslySetInnerHTML={{ __html: specifications }}
-            />
-          </div>
-
-          {/* Call to action */}
-          <div className="pt-2">
+          {/* Call to action - Always at bottom */}
+          <div className="mt-auto pt-6">
             <button
               onClick={openBookingForm}
               className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-[#03539d]"
