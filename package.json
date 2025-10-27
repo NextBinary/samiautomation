@@ -1,9 +1,9 @@
 {
   "name": "dr-samdani",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node api.js && next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node api.js && next start",
     "lint": "next lint",
     "format:check": "prettier --check ./src",
     "format:fix": "prettier --write ./src",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "eslint": "^9",
-    "eslint-config-next": "15.1.7",
+    "eslint-config-next": "16.0.0",
     "husky": "^9.1.7",
     "postcss": "^8",
     "prettier": "^3.5.1",
