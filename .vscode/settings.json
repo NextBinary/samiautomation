@@ -4,7 +4,6 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "tsconfig.json": "tsconfig.*.json, global.d.ts",
@@ -14,5 +13,14 @@
     "vite.config.ts": "auto-imports.d.ts, .eslintrc-auto-import.json ",
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, eslint.config*, .prettier*, prettier*, .editorconfig, .lintstagedrc, bun.lock",
     "next.config.mjs": "jsconfig.json"
+  },
+  "task.allowAutomaticTasks": true,
+  "debug.openDebug": "neverOpen",
+  "terminal.integrated.inheritEnv": false,
+  "tasks": {
+    "label": "lint on open",
+    "type": "shell",
+    "command": "npm run lint",
+    "runOn": "folderOpen"
   }
 }
