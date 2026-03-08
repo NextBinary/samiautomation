@@ -39,7 +39,7 @@ export default async function sitemap() {
           priority: 0.9,
         }));
     }
-  } catch (e) {
+  } catch {
     // Fail silently — sitemap will still include static pages
   }
 
@@ -55,7 +55,7 @@ export default async function sitemap() {
         priority: 0.8,
       }));
     }
-  } catch (e) {
+  } catch {
     // Fail silently
   }
 
