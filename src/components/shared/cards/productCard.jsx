@@ -1,8 +1,10 @@
 "use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import ButtonBlue from "../button";
 
 export default function ProductCard({ product }) {
+  const router = useRouter();
   const {
     image,
     title = "Super Shop Store Solution",
@@ -18,7 +20,10 @@ export default function ProductCard({ product }) {
       : 0;
 
   return (
-    <div className="group overflow-hidden rounded-xl border border-[#E2E8F0] bg-white transition-all duration-300 hover:border-[#0060B7]/20 hover:shadow-[0_8px_30px_rgba(0,96,183,0.08)]">
+    <div
+      className="group cursor-pointer overflow-hidden rounded-xl border border-[#E2E8F0] bg-white transition-all duration-300 hover:border-[#0060B7]/20 hover:shadow-[0_8px_30px_rgba(0,96,183,0.08)]"
+      onClick={() => router.push(`/product/${product.id}`)}
+    >
       {/* Image container */}
       <div className="relative overflow-hidden">
         <div className="relative aspect-[4/3] overflow-hidden bg-[#F8FAFC]">
@@ -32,7 +37,7 @@ export default function ProductCard({ product }) {
 
         {/* Discount badge */}
         {discountPercent > 0 && (
-          <div className="absolute left-2.5 top-2.5 rounded-md bg-[#0060B7] px-2 py-0.5 font-nunito text-[10px] font-bold text-white sm:text-xs">
+          <div className="absolute right-2.5 top-2.5 rounded-md bg-[#0060B7] px-2 py-0.5 font-nunito text-[10px] font-bold text-white sm:text-xs">
             -{discountPercent}%
           </div>
         )}

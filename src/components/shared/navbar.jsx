@@ -16,10 +16,12 @@ export default function Navbar() {
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
   const searchRef = useRef(null);
+  const mobileSearchRef = useRef(null);
   const debounceRef = useRef(null);
 
   const navLinks = [
     { name: "Home", path: "/" },
+    { name: "Products", path: "/products" },
     { name: "Categories", path: "/categories" },
     { name: "Contact", path: "/contact" },
     { name: "About us", path: "/about" },
@@ -72,12 +74,10 @@ export default function Navbar() {
     const query = e.target.value;
     setSearchQuery(query);
 
-    // Clear previous debounce
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
 
-    // Debounce search
     debounceRef.current = setTimeout(() => {
       searchProducts(query);
     }, 300);
@@ -91,6 +91,9 @@ export default function Navbar() {
 
   const handleClickOutside = (event) => {
     if (searchRef.current && !searchRef.current.contains(event.target)) {
+      setShowResults(false);
+    }
+    if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target)) {
       setShowResults(false);
     }
   };
@@ -110,36 +113,70 @@ export default function Navbar() {
     };
   }, []);
 
+  const SearchDropdown = () =>
+    showResults && (
+      <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-y-auto rounded-xl border border-[#E2E8F0] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+        {searchResults.length > 0 ? (
+          searchResults.map((product) => (
+            <div
+              key={product.id}
+              onClick={() => handleProductClick(product.id)}
+              className="flex cursor-pointer items-center gap-3 border-b border-[#F1F5F9] px-4 py-3 transition-colors duration-150 last:border-b-0 hover:bg-[#F8FAFC]"
+            >
+              <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-[#F1F5F9]">
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  sizes="40px"
+                />
+              </div>
+              <p className="truncate font-nunito text-sm font-medium text-[#191D23]">
+                {product.name}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="px-4 py-6 text-center">
+            <p className="font-nunito text-sm text-[#94A3B8]">No products found</p>
+          </div>
+        )}
+      </div>
+    );
+
   return (
     <>
       {/* Mobile Navbar */}
-      <div className="sticky top-0 z-50 bg-[#0060B7] shadow-sm md:hidden">
+      <div className="sticky top-0 z-50 border-b border-white/10 bg-[#0060B7] md:hidden">
         <nav className="px-4 py-3">
-          {/* Top row with menu and logo */}
           <div className="mb-3 flex items-center justify-between">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
-                <button className="p-2 text-white">
-                  <Menu className="h-6 w-6" />
+                <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white transition-colors hover:bg-white/20">
+                  <Menu className="h-5 w-5" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left">
+              <SheetContent side="left" className="w-[280px] border-r-0 bg-white p-0">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                <div className="flex flex-col space-y-4 p-4">
-                  <Link href="/" className="mb-4" onClick={handleLinkClick}>
-                    <Image src={img1} alt="Logo" width={100} height={40} priority />
-                  </Link>
-                  <ul className="flex flex-col space-y-4">
+                <div className="flex h-full flex-col">
+                  <div className="border-b border-[#F1F5F9] px-5 py-5">
+                    <Link href="/" onClick={handleLinkClick}>
+                      <Image src={img1} alt="Logo" width={110} height={44} priority />
+                    </Link>
+                  </div>
+                  <ul className="flex-1 px-3 py-4">
                     {navLinks.map((link) => (
-                      <li
-                        key={link.name}
-                        className={`font-nunito text-lg font-normal ${
-                          pathname === link.path
-                            ? "text-[#0060B7]"
-                            : "text-gray-700 hover:text-[#0060B7]"
-                        }`}
-                      >
-                        <Link href={link.path} onClick={handleLinkClick}>
+                      <li key={link.name}>
+                        <Link
+                          href={link.path}
+                          onClick={handleLinkClick}
+                          className={`flex items-center rounded-lg px-3 py-2.5 font-nunito text-[15px] font-medium transition-colors ${
+                            pathname === link.path
+                              ? "bg-[#0060B7]/5 text-[#0060B7]"
+                              : "text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0060B7]"
+                          }`}
+                        >
                           {link.name}
                         </Link>
                       </li>
@@ -148,153 +185,110 @@ export default function Navbar() {
                 </div>
               </SheetContent>
             </Sheet>
-            <div className="flex justify-center">
-              <Link href="/">
-                <Image
-                  src={img1}
-                  alt="Logo"
-                  width={80}
-                  height={32}
-                  priority
-                  className="brightness-0 invert"
-                />
-              </Link>
-            </div>
-            <div className="w-10"></div> {/* Spacer to balance the layout */}
+
+            <Link href="/">
+              <Image
+                src={img1}
+                alt="Logo"
+                width={80}
+                height={32}
+                priority
+                className="brightness-0 invert"
+              />
+            </Link>
+
+            <div className="w-9" />
           </div>
 
-          {/* Search bar */}
-          <div className="relative" ref={searchRef}>
-            <form className="flex items-center rounded-full border bg-white">
+          {/* Mobile search */}
+          <div className="relative" ref={mobileSearchRef}>
+            <div className="flex items-center overflow-hidden rounded-xl bg-white/95 backdrop-blur-sm">
+              <svg
+                className="ml-3 h-4 w-4 flex-shrink-0 text-[#94A3B8]"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="flex-1 rounded-full border-none bg-white px-4 py-3 text-gray-900 placeholder:text-gray-500 focus:outline-none"
+                className="flex-1 bg-transparent px-3 py-2.5 font-nunito text-sm text-[#191D23] placeholder:text-[#94A3B8] focus:outline-none"
                 placeholder="Search products..."
               />
-              <button type="button" className="rounded-r-full bg-white px-4 py-3">
-                {loading ? "..." : "🔍"}
-              </button>
-            </form>
-
-            {/* Search Results Dropdown for Mobile */}
-            {showResults && (
-              <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
-                {searchResults.length > 0 ? (
-                  searchResults.map((product) => (
-                    <div
-                      key={product.id}
-                      onClick={() => handleProductClick(product.id)}
-                      className="flex cursor-pointer items-center border-b border-gray-100 p-3 hover:bg-gray-50"
-                    >
-                      <div className="relative mr-3 h-12 w-12 flex-shrink-0">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          fill
-                          className="rounded object-cover"
-                          sizes="48px"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-nunito text-sm font-medium text-gray-900">
-                          {product.name}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-3 text-center text-gray-500">
-                    <p className="font-nunito text-sm">No products found</p>
-                  </div>
-                )}
-              </div>
-            )}
+              {loading && (
+                <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-[#0060B7]/20 border-t-[#0060B7]" />
+              )}
+            </div>
+            <SearchDropdown />
           </div>
         </nav>
       </div>
 
       {/* Desktop Navbar */}
-      <div className="sticky top-0 z-50 hidden bg-white/70 shadow-sm backdrop-blur-md md:block">
-        <nav className="container mx-auto flex items-center justify-between py-4">
-          <div className="flex w-[20%] items-center">
-            <Link href="/">
-              <Image
-                src={img1}
-                alt="Logo"
-                className="pl-4 lg:pl-0"
-                width={100}
-                height={40}
-                priority
-              />
-            </Link>
-          </div>
-          <div className="hidden w-[60%] justify-center md:flex">
-            <ul className="flex space-x-12">
-              {navLinks.map((link) => (
-                <li
-                  key={link.name}
-                  className={`font-nunito text-lg font-normal ${
+      <div className="sticky top-0 z-50 hidden border-b border-[#E2E8F0]/60 bg-white/80 backdrop-blur-xl md:block">
+        <nav className="container relative mx-auto flex items-center justify-between px-4 py-3">
+          {/* Logo */}
+          <Link href="/" className="relative z-10 flex-shrink-0">
+            <Image src={img1} alt="Logo" width={110} height={44} priority />
+          </Link>
+
+          {/* Nav links - absolutely centered */}
+          <ul className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1">
+            {navLinks.map((link) => (
+              <li key={link.name}>
+                <Link
+                  href={link.path}
+                  className={`relative whitespace-nowrap rounded-lg px-4 py-2 font-nunito text-[15px] font-medium transition-all duration-200 ${
                     pathname === link.path
-                      ? "border-b-2 border-blue-500 text-[#0060B7]"
-                      : "text-gray-700 hover:text-[#0060B7]"
+                      ? "text-[#0060B7]"
+                      : "text-[#475569] hover:bg-[#F8FAFC] hover:text-[#0060B7]"
                   }`}
                 >
-                  <Link href={link.path}>{link.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="flex w-[20%] justify-end">
-            <div className="relative hidden md:block" ref={searchRef}>
-              <form className="flex items-center rounded-md border bg-[rgb(213,232,255)]">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  className="border-none bg-[rgb(213,232,255)] px-4 py-2 text-gray-900 placeholder:text-[#3C3C4399] focus:outline-none"
-                  placeholder="Search products..."
-                />
-                <button type="button" className="bg-[rgb(213,232,255)] px-4 py-2">
-                  {loading ? "..." : "🔍"}
-                </button>
-              </form>
-
-              {/* Search Results Dropdown */}
-              {showResults && (
-                <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg">
-                  {searchResults.length > 0 ? (
-                    searchResults.map((product) => (
-                      <div
-                        key={product.id}
-                        onClick={() => handleProductClick(product.id)}
-                        className="flex cursor-pointer items-center border-b border-gray-100 p-3 hover:bg-gray-50"
-                      >
-                        <div className="relative mr-3 h-12 w-12 flex-shrink-0">
-                          <Image
-                            src={product.image}
-                            alt={product.name}
-                            fill
-                            className="rounded object-cover"
-                            sizes="48px"
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate font-nunito text-sm font-medium text-gray-900">
-                            {product.name}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-3 text-center text-gray-500">
-                      <p className="font-nunito text-sm">No products found</p>
-                    </div>
+                  {link.name}
+                  {pathname === link.path && (
+                    <span className="absolute bottom-0 left-1/2 h-[2px] w-5 -translate-x-1/2 rounded-full bg-[#0060B7]" />
                   )}
-                </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Search */}
+          <div className="relative z-10" ref={searchRef}>
+            <div className="flex items-center overflow-hidden rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] transition-all duration-200 focus-within:border-[#0060B7]/30 focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(0,96,183,0.06)]">
+              <svg
+                className="ml-3 h-4 w-4 flex-shrink-0 text-[#94A3B8]"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-44 bg-transparent px-3 py-2 font-nunito text-sm text-[#191D23] placeholder:text-[#94A3B8] focus:outline-none lg:w-52"
+                placeholder="Search products..."
+              />
+              {loading && (
+                <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-[#0060B7]/20 border-t-[#0060B7]" />
               )}
             </div>
+            <SearchDropdown />
           </div>
         </nav>
       </div>

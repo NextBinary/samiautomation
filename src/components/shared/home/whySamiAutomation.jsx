@@ -37,31 +37,46 @@ export default function WhySamiAutomation() {
   }
 
   return (
-    <section className="my-12 px-4 lg:my-24 lg:px-0">
-      <h2 className="mb-6 text-center font-nunito text-2xl font-light text-[#202020] sm:mb-8 sm:text-3xl md:mb-10 md:text-left md:text-4xl">
-        Why Sami Automation
-      </h2>
-
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature, index) => (
-          <div key={index} className="group flex flex-col items-center text-center">
-            <div className="flex items-center justify-center rounded-full p-3">
-              <Image
-                src={feature.icon}
-                alt={feature.title}
-                width={40}
-                height={40}
-                className="size-16 object-contain transition duration-300 ease-in-out group-hover:scale-125"
-              />
-            </div>
-            <h3 className="mb-2 font-nunito text-xl font-normal leading-7 text-[#141414]">
-              {feature.title}
-            </h3>
-            <p className="font-nunito text-lg font-light leading-7 text-[#133240]">
-              {feature.description}
-            </p>
+    <section className="my-12 sm:my-16 md:my-20 lg:my-24">
+      <div className="container mx-auto px-3 sm:px-4">
+        {/* Section header */}
+        <div className="mb-6 sm:mb-8 md:mb-10">
+          <div className="mb-2 flex items-center gap-2">
+            <div className="h-[3px] w-8 rounded-full bg-[#0060B7]" />
+            <span className="font-nunito text-xs font-semibold uppercase tracking-[0.2em] text-[#0060B7] sm:text-sm">
+              Our Promise
+            </span>
           </div>
-        ))}
+          <h2 className="font-nunito text-2xl font-bold text-[#202020] sm:text-3xl md:text-4xl">
+            Why Sami
+            <span className="block font-light text-[#555] sm:inline sm:pl-2">Automation</span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="group flex flex-col items-center rounded-2xl border border-[#E2E8F0] bg-white p-6 text-center transition-all duration-300 hover:border-[#0060B7]/20 hover:shadow-[0_8px_30px_rgba(0,96,183,0.08)] sm:p-8"
+            >
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#0060B7]/5 transition-colors duration-300 group-hover:bg-[#0060B7]/10 sm:h-20 sm:w-20">
+                <Image
+                  src={feature.icon}
+                  alt={feature.title}
+                  width={48}
+                  height={48}
+                  className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-110 sm:h-10 sm:w-10"
+                />
+              </div>
+              <h3 className="mb-2 font-nunito text-lg font-semibold text-[#191D23] sm:text-xl">
+                {feature.title}
+              </h3>
+              <p className="font-nunito text-sm font-normal leading-relaxed text-[#64748B] sm:text-base">
+                {feature.description}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

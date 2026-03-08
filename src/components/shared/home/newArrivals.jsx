@@ -37,63 +37,109 @@ export default function NewArrivals() {
     return null;
   }
 
+  const getImage = (serial) => products.find((p) => p.serial === serial)?.image;
+
   return (
-    <section className="mt-12 px-2 lg:mt-24 lg:px-0">
-      <h2 className="mb-6 text-center font-nunito text-2xl font-light text-[#202020] sm:mb-8 sm:text-3xl md:mb-10 md:text-left md:text-4xl">
-        New Arrivals
-      </h2>
-
-      <div className="grid grid-cols-4 gap-2 lg:gap-6">
-        {/* First item (large) */}
-        <div className="col-span-2 row-span-2 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
-          <div className="h-full">
-            <Image
-              src={products.find((p) => p.serial === 1)?.image}
-              alt={`Product 1`}
-              className="h-full w-full object-cover"
-              width={500}
-              height={500}
-            />
+    <section className="my-12 sm:my-16 md:my-20 lg:my-24">
+      <div className="container mx-auto px-3 sm:px-4">
+        {/* Section header */}
+        <div className="mb-6 sm:mb-8 md:mb-10">
+          <div className="mb-2 flex items-center gap-2">
+            <div className="h-[3px] w-8 rounded-full bg-[#0060B7]" />
+            <span className="font-nunito text-xs font-semibold uppercase tracking-[0.2em] text-[#0060B7] sm:text-sm">
+              Just In
+            </span>
           </div>
+          <h2 className="font-nunito text-2xl font-bold text-[#202020] sm:text-3xl md:text-4xl">
+            New Arrivals
+            <span className="block font-light text-[#555] sm:inline sm:pl-2">Collection</span>
+          </h2>
         </div>
 
-        {/* Second item (top right - full width) */}
-        <div className="col-span-2 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
-          <div className="h-full">
-            <Image
-              src={products.find((p) => p.serial === 2)?.image}
-              alt={`Product 2`}
-              className="h-full w-full object-cover"
-              width={500}
-              height={250}
-            />
-          </div>
-        </div>
+        <div className="grid grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+          {/* First item (large) */}
+          {getImage(1) && (
+            <div className="group col-span-2 row-span-2 cursor-pointer overflow-hidden rounded-2xl">
+              <div className="relative h-full">
+                <Image
+                  src={getImage(1)}
+                  alt="Product 1"
+                  className="h-full w-full object-fill transition-transform duration-500 ease-out group-hover:scale-110"
+                  width={500}
+                  height={500}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-x-0 bottom-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                  <span className="font-nunito text-sm font-semibold text-white drop-shadow-md">
+                    View Product
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* Third item (bottom right - half width) */}
-        <div className="col-span-1 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
-          <div className="h-full">
-            <Image
-              src={products.find((p) => p.serial === 3)?.image}
-              alt={`Product 3`}
-              className="h-full w-full object-cover"
-              width={250}
-              height={250}
-            />
-          </div>
-        </div>
+          {/* Second item (top right - full width) */}
+          {getImage(2) && (
+            <div className="group col-span-2 cursor-pointer overflow-hidden rounded-2xl">
+              <div className="relative h-full">
+                <Image
+                  src={getImage(2)}
+                  alt="Product 2"
+                  className="h-full w-full object-fill transition-transform duration-500 ease-out group-hover:scale-110"
+                  width={500}
+                  height={250}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-x-0 bottom-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                  <span className="font-nunito text-sm font-semibold text-white drop-shadow-md">
+                    View Product
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* Fourth item (bottom right - half width) */}
-        <div className="col-span-1 overflow-hidden rounded-lg border shadow-md transition-shadow hover:shadow-lg">
-          <div className="h-full">
-            <Image
-              src={products.find((p) => p.serial === 4)?.image}
-              alt={`Product 4`}
-              className="h-full w-full object-cover"
-              width={250}
-              height={250}
-            />
-          </div>
+          {/* Third item (bottom right - half width) */}
+          {getImage(3) && (
+            <div className="group col-span-1 cursor-pointer overflow-hidden rounded-2xl">
+              <div className="relative h-full">
+                <Image
+                  src={getImage(3)}
+                  alt="Product 3"
+                  className="h-full w-full object-fill transition-transform duration-500 ease-out group-hover:scale-110"
+                  width={250}
+                  height={250}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-x-0 bottom-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                  <span className="font-nunito text-sm font-semibold text-white drop-shadow-md">
+                    View Product
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Fourth item (bottom right - half width) */}
+          {getImage(4) && (
+            <div className="group col-span-1 cursor-pointer overflow-hidden rounded-2xl">
+              <div className="relative h-full">
+                <Image
+                  src={getImage(4)}
+                  alt="Product 4"
+                  className="h-full w-full object-fill transition-transform duration-500 ease-out group-hover:scale-110"
+                  width={250}
+                  height={250}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-x-0 bottom-0 translate-y-full p-4 transition-transform duration-300 group-hover:translate-y-0">
+                  <span className="font-nunito text-sm font-semibold text-white drop-shadow-md">
+                    View Product
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

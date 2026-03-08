@@ -7,14 +7,14 @@ import WhySamiAutomation from "@/components/shared/home/whySamiAutomation";
 
 const Page = () => {
   return (
-    <div>
+    <main className="overflow-hidden">
       <Hero />
       <TopCategories />
       <FeatureProduct />
       <NewArrivals />
       <WhySamiAutomation />
       <Testimonials />
-    </div>
+    </main>
   );
 };
 

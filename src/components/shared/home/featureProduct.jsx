@@ -9,7 +9,7 @@ export default function FeatureProduct() {
 
   const fetchProductsData = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product?all=true`, {
         cache: "no-store",
       });
       const result = await response.json();
@@ -64,7 +64,7 @@ export default function FeatureProduct() {
 
           {/* View All button */}
           <button
-            onClick={() => router.push("/categories")}
+            onClick={() => router.push("/products")}
             className="group/btn flex items-center gap-1.5 rounded-full border-2 border-[#0060B7]/20 bg-white px-4 py-2 font-nunito text-xs font-semibold text-[#0060B7] transition-all duration-300 hover:border-[#0060B7] hover:bg-[#0060B7] hover:text-white sm:gap-2 sm:px-6 sm:py-2.5 sm:text-sm"
           >
             View All

@@ -159,7 +159,7 @@ export default function Footer() {
             </Link>
           </div>
           <div className="font-nunito font-light text-[#000000]">
-            Copyright © 2025 • Sami Automation ltd.
+            Copyright © 2026 • Sami Automation ltd.
           </div>
 
           <div>

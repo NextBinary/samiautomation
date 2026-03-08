@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -16,6 +17,17 @@ export default function Product() {
     phone: "",
     address: "",
   });
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const imageContainerRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (!imageContainerRef.current) return;
+    const rect = imageContainerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPosition({ x, y });
+  };
 
   const fetchProduct = async () => {
     try {
@@ -30,7 +42,6 @@ export default function Product() {
       if (result.data) {
         const productData = result.data;
 
-        // Prepare images array
         const images = [
           productData.thumbnail,
           productData.image1,
@@ -89,7 +100,6 @@ export default function Product() {
     fetchContactInfo();
   }, [params.id]);
 
-  // Add booking form submission function
   const submitBookingForm = async (formData) => {
     setIsSubmitting(true);
 
@@ -128,11 +138,13 @@ export default function Product() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex h-96 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-[#0060B7]"></div>
-            <p className="mt-2 text-[#0060B7]">Loading...</p>
+      <div className="my-12 sm:my-16 md:my-20">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex h-[50vh] items-center justify-center">
+            <div className="text-center">
+              <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-[#E2E8F0] border-t-[#0060B7]" />
+              <p className="mt-3 font-nunito text-sm text-[#64748B]">Loading product...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -141,9 +153,24 @@ export default function Product() {
 
   if (!product) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <p className="text-[#0060B7]">Product not found</p>
+      <div className="my-12 sm:my-16 md:my-20">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex h-[50vh] items-center justify-center">
+            <div className="text-center">
+              <h2 className="mb-2 font-nunito text-2xl font-bold text-[#191D23]">
+                Product Not Found
+              </h2>
+              <p className="mb-6 font-nunito text-[#64748B]">
+                The product you're looking for doesn't exist.
+              </p>
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#0060B7] px-6 py-2.5 font-nunito text-sm font-semibold text-white transition-colors hover:bg-[#004d93]"
+              >
+                Browse Products
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -152,207 +179,327 @@ export default function Product() {
   const { name, currentPrice, originalPrice, images, features, specifications, descriptionText } =
     product;
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Mobile layout (stacked) */}
-      <div className="block lg:hidden">
-        <div className="mb-6">
-          <div className="relative aspect-square w-full overflow-hidden rounded-md">
-            <Image
-              src={images[selectedImage]}
-              alt={name}
-              fill
-              className="object-cover"
-              sizes="100vw"
-              priority
-            />
-          </div>
-        </div>
+  const discountPercent =
+    originalPrice && originalPrice > currentPrice
+      ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
+      : 0;
 
-        <div className="mb-6 flex flex-wrap gap-2 overflow-x-auto">
-          {images.map((image, index) => (
+  return (
+    <div className="my-8 sm:my-10 md:my-12">
+      <div className="container mx-auto px-3 sm:px-4">
+        {/* Breadcrumb */}
+        <nav className="mb-6 flex items-center gap-2 font-nunito text-sm text-[#94A3B8] sm:mb-8">
+          <Link href="/" className="transition-colors hover:text-[#0060B7]">
+            Home
+          </Link>
+          <svg
+            className="h-3.5 w-3.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+          <Link href="/products" className="transition-colors hover:text-[#0060B7]">
+            Products
+          </Link>
+          <svg
+            className="h-3.5 w-3.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+          <span className="truncate text-[#191D23]">{name}</span>
+        </nav>
+
+        {/* Product layout */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+          {/* Left — Images */}
+          <div className="lg:col-span-7">
+            {/* Main image with inline zoom */}
             <div
-              key={index}
-              className={`cursor-pointer overflow-hidden rounded-md ${
-                selectedImage === index ? "border-2 border-blue-500" : "border border-gray-200"
-              }`}
-              onClick={() => setSelectedImage(index)}
+              ref={imageContainerRef}
+              className="relative aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-xl border border-[#E2E8F0] bg-[#F8FAFC]"
+              onMouseEnter={() => setIsZoomed(true)}
+              onMouseLeave={() => setIsZoomed(false)}
+              onMouseMove={handleMouseMove}
             >
-              <div className="relative h-16 w-16">
-                <Image
-                  src={image}
-                  alt={`${name} thumbnail ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
+              <Image
+                src={images[selectedImage]}
+                alt={name}
+                fill
+                className={`object-fill transition-opacity duration-200 ${isZoomed ? "lg:opacity-0" : ""}`}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
+              />
+              {/* Zoomed view — inline magnification */}
+              <div
+                className={`absolute inset-0 z-10 hidden transition-opacity duration-200 lg:block ${isZoomed ? "opacity-100" : "pointer-events-none opacity-0"}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={images[selectedImage]}
+                  alt=""
+                  className="absolute h-full w-full max-w-none object-none"
+                  draggable={false}
+                  style={{
+                    objectPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                    transform: "scale(1.5)",
+                  }}
                 />
               </div>
-            </div>
-          ))}
-        </div>
 
-        {/* Product details for mobile */}
-        <div className="flex flex-col space-y-6">
-          <h1 className="font-nunito text-3xl font-bold text-[#202020]">{name}</h1>
+              {discountPercent > 0 && (
+                <div className="absolute right-3 top-3 z-20 rounded-lg bg-[#0060B7] px-2.5 py-1 font-nunito text-xs font-bold text-white">
+                  -{discountPercent}%
+                </div>
+              )}
 
-          <div className="flex items-center">
-            <span className="font-nunito text-3xl font-bold text-[#202020]">৳{currentPrice}</span>
-            <span className="ml-4 font-nunito text-xl text-gray-500 line-through">
-              ৳{originalPrice}
-            </span>
-          </div>
-
-          {/* Key Features */}
-          <div>
-            <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">Key Features:</h2>
-            <div
-              className="font-nunito text-[#202020]"
-              dangerouslySetInnerHTML={{ __html: features }}
-            />
-          </div>
-
-          {/* Specifications */}
-          <div>
-            <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">Specifications:</h2>
-            <div
-              className="font-nunito text-[#202020]"
-              dangerouslySetInnerHTML={{ __html: specifications }}
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">Description:</h2>
-            <div
-              className="font-nunito text-[#202020]"
-              dangerouslySetInnerHTML={{ __html: descriptionText }}
-            />
-          </div>
-
-          {/* Call to action */}
-          <div className="pt-2">
-            <button
-              onClick={openBookingForm}
-              className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-blue-600"
-            >
-              Free Booking
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop 3-column layout */}
-      <div className="hidden grid-cols-12 gap-6 lg:grid">
-        {/* Left column - Thumbnails */}
-        <div className="col-span-1">
-          <div className="flex flex-col space-y-3">
-            {images.map((image, index) => (
+              {/* Zoom hint */}
               <div
-                key={index}
-                className={`cursor-pointer overflow-hidden rounded-md ${
-                  selectedImage === index ? "border-2 border-[#0060B7]" : "border border-gray-200"
-                }`}
-                onClick={() => setSelectedImage(index)}
+                className="pointer-events-none absolute bottom-3 left-3 z-20 hidden items-center gap-1.5 rounded-lg bg-black/50 px-2.5 py-1 font-nunito text-[11px] text-white/80 backdrop-blur-sm transition-opacity duration-300 lg:flex"
+                style={{ opacity: isZoomed ? 0 : 1 }}
               >
-                <div className="relative aspect-square">
-                  <Image
-                    src={image}
-                    alt={`${name} thumbnail ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="100px"
+                <svg
+                  className="h-3.5 w-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6"
+                  />
+                </svg>
+                Hover to zoom
+              </div>
+            </div>
+
+            {/* Thumbnails */}
+            {images.length > 0 && (
+              <div className="mt-3 flex gap-2 overflow-x-auto p-1 sm:mt-4 sm:gap-3">
+                {images.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(index)}
+                    className={`relative flex-shrink-0 overflow-hidden rounded-lg transition-all duration-200 ${
+                      selectedImage === index
+                        ? "ring-2 ring-[#0060B7] ring-offset-2"
+                        : "border border-[#E2E8F0] opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <div className="relative h-16 w-16 sm:h-20 sm:w-20">
+                      <Image
+                        src={image}
+                        alt={`${name} view ${index + 1}`}
+                        fill
+                        className="object-fill"
+                        sizes="80px"
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right — Product info */}
+          <div className="flex flex-col lg:col-span-5">
+            {/* Product name */}
+            <h1 className="mb-4 font-nunito text-2xl font-bold leading-tight text-[#191D23] sm:text-3xl lg:text-[34px]">
+              {name}
+            </h1>
+
+            {/* Price section */}
+            <div className="mb-6 flex items-baseline gap-3">
+              <span className="font-nunito text-3xl font-bold text-[#191D23] sm:text-4xl">
+                ৳{currentPrice?.toLocaleString()}
+              </span>
+              {originalPrice && originalPrice > currentPrice && (
+                <span className="font-nunito text-lg text-[#94A3B8] line-through">
+                  ৳{originalPrice?.toLocaleString()}
+                </span>
+              )}
+              {discountPercent > 0 && (
+                <span className="rounded-md bg-[#0060B7]/10 px-2 py-0.5 font-nunito text-sm font-semibold text-[#0060B7]">
+                  Save {discountPercent}%
+                </span>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="mb-6 h-px bg-[#E2E8F0]" />
+
+            {/* Key Features */}
+            {features && (
+              <div className="mb-5">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0060B7]/10">
+                    <svg
+                      className="h-4 w-4 text-[#0060B7]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <h2 className="font-nunito text-base font-semibold text-[#191D23]">
+                    Key Features
+                  </h2>
+                </div>
+                <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+                  <div
+                    className="prose-sm font-nunito text-sm leading-relaxed text-[#475569] [&_li]:mb-1 [&_ul]:list-disc [&_ul]:pl-4"
+                    dangerouslySetInnerHTML={{ __html: features }}
                   />
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Middle column - Main image */}
-        <div className="col-span-6">
-          <div className="relative aspect-square w-full overflow-hidden rounded-md">
-            <Image
-              src={images[selectedImage]}
-              alt={name}
-              fill
-              className="object-cover"
-              sizes="50vw"
-              priority
-            />
-          </div>
-        </div>
-
-        {/* Right column - Product details */}
-        <div className="col-span-5 flex h-full flex-col space-y-6">
-          <div className="flex flex-1 flex-col space-y-6">
-            <h1 className="font-nunito text-4xl font-bold text-[#202020]">{name}</h1>
-
-            {/* Pricing */}
-            <div className="flex items-center">
-              <span className="font-nunito text-4xl font-bold text-[#202020]">৳{currentPrice}</span>
-              <span className="ml-4 font-nunito text-xl text-gray-500 line-through">
-                ৳{originalPrice}
-              </span>
-            </div>
-
-            {/* Key Features */}
-            <div>
-              <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">Key Features:</h2>
-              <div
-                className="font-nunito text-[#202020]"
-                dangerouslySetInnerHTML={{ __html: features }}
-              />
-            </div>
+            )}
 
             {/* Specifications */}
-            <div>
-              <h2 className="mb-3 font-nunito text-xl font-medium text-[#202020]">
-                Specifications:
+            {specifications && (
+              <div className="mb-6">
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0060B7]/10">
+                    <svg
+                      className="h-4 w-4 text-[#0060B7]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+                      />
+                    </svg>
+                  </div>
+                  <h2 className="font-nunito text-base font-semibold text-[#191D23]">
+                    Specifications
+                  </h2>
+                </div>
+                <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+                  <div
+                    className="prose-sm font-nunito text-sm leading-relaxed text-[#475569] [&_li]:mb-1 [&_ul]:list-disc [&_ul]:pl-4"
+                    dangerouslySetInnerHTML={{ __html: specifications }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* CTA */}
+            <div className="mt-auto pt-4">
+              <button
+                onClick={openBookingForm}
+                className="group relative w-full overflow-hidden rounded-xl bg-[#0060B7] px-8 py-3.5 font-nunito text-base font-semibold text-white shadow-lg shadow-[#0060B7]/20 transition-all duration-300 hover:bg-[#004d93] hover:shadow-xl hover:shadow-[#0060B7]/25"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  Free Booking
+                  <svg
+                    className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2.5}
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
+                  </svg>
+                </span>
+              </button>
+
+              {/* Contact info */}
+              {contactInfo.phone && (
+                <p className="mt-3 text-center font-nunito text-xs text-[#94A3B8]">
+                  Or call us at{" "}
+                  <a
+                    href={`tel:${contactInfo.phone}`}
+                    className="font-medium text-[#0060B7] hover:underline"
+                  >
+                    {contactInfo.phone}
+                  </a>
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Description — full width below */}
+        {descriptionText && (
+          <div className="mt-10 sm:mt-14">
+            <div className="mb-4 flex items-center gap-2">
+              <div className="h-[3px] w-8 rounded-full bg-[#0060B7]" />
+              <h2 className="font-nunito text-xl font-bold text-[#191D23] sm:text-2xl">
+                Product Description
               </h2>
+            </div>
+            <div className="rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-5 sm:p-8">
               <div
-                className="font-nunito text-[#202020]"
-                dangerouslySetInnerHTML={{ __html: specifications }}
+                className="prose max-w-none font-nunito text-[15px] leading-relaxed text-[#475569] [&_h1]:text-[#191D23] [&_h2]:text-[#191D23] [&_h3]:text-[#191D23] [&_li]:mb-1 [&_strong]:text-[#191D23] [&_ul]:list-disc [&_ul]:pl-5"
+                dangerouslySetInnerHTML={{ __html: descriptionText }}
               />
             </div>
           </div>
-
-          {/* Call to action - Always at bottom */}
-          <div className="mt-auto pt-6">
-            <button
-              onClick={openBookingForm}
-              className="w-full rounded-md bg-[#0060B7] py-3 text-center font-nunito text-lg font-medium text-white hover:bg-[#03539d]"
-            >
-              Free Booking
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Description section at the bottom */}
-      <div className="mt-10 border-t pt-6">
-        <h2 className="mb-3 font-nunito text-2xl font-medium text-[#202020]">Description</h2>
-        <div
-          className="font-nunito text-[#202020]"
-          dangerouslySetInnerHTML={{ __html: descriptionText }}
-        />
+        )}
       </div>
 
       {/* Booking Form Modal */}
       {isBookingFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="mx-4 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-[#202020]">Book Product: {product.name}</h2>
-              <button onClick={closeBookingForm} className="text-gray-500 hover:text-gray-700">
-                ✕
-              </button>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#0A1628]/60 backdrop-blur-sm"
+          onClick={(e) => e.target === e.currentTarget && closeBookingForm()}
+        >
+          <div className="mx-4 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+            {/* Modal header */}
+            <div className="border-b border-[#E2E8F0] bg-[#F8FAFC] px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-nunito text-lg font-bold text-[#191D23]">
+                    Book This Product
+                  </h2>
+                  <p className="font-nunito text-xs text-[#94A3B8]">{product.name}</p>
+                </div>
+                <button
+                  onClick={closeBookingForm}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-[#94A3B8] transition-colors hover:bg-[#E2E8F0] hover:text-[#191D23]"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            <BookingForm
-              onSubmit={submitBookingForm}
-              isSubmitting={isSubmitting}
-              onClose={closeBookingForm}
-            />
+            {/* Modal body */}
+            <div className="max-h-[70vh] overflow-y-auto p-6">
+              <BookingForm
+                onSubmit={submitBookingForm}
+                isSubmitting={isSubmitting}
+                onClose={closeBookingForm}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -381,56 +528,74 @@ function BookingForm({ onSubmit, isSubmitting, onClose }) {
     onSubmit(formData);
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-2.5 font-nunito text-sm text-[#191D23] placeholder:text-[#94A3B8] transition-all duration-200 focus:border-[#0060B7]/30 focus:bg-white focus:outline-none focus:ring-[3px] focus:ring-[#0060B7]/10";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
-          Name <span className="text-red-500">*</span>
+        <label
+          htmlFor="name"
+          className="mb-1.5 block font-nunito text-sm font-medium text-[#191D23]"
+        >
+          Full Name <span className="text-red-400">*</span>
         </label>
         <input
           type="text"
           id="name"
           name="name"
           required
+          placeholder="Enter your name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0060B7]"
+          className={inputClass}
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
-          Email <span className="text-red-500">*</span>
+        <label
+          htmlFor="email"
+          className="mb-1.5 block font-nunito text-sm font-medium text-[#191D23]"
+        >
+          Email Address <span className="text-red-400">*</span>
         </label>
         <input
           type="email"
           id="email"
           name="email"
           required
+          placeholder="your@email.com"
           value={formData.email}
           onChange={handleChange}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0060B7]"
+          className={inputClass}
         />
       </div>
 
       <div>
-        <label htmlFor="phone" className="mb-1 block text-sm font-medium text-gray-700">
-          Phone <span className="text-red-500">*</span>
+        <label
+          htmlFor="phone"
+          className="mb-1.5 block font-nunito text-sm font-medium text-[#191D23]"
+        >
+          Phone Number <span className="text-red-400">*</span>
         </label>
         <input
           type="tel"
           id="phone"
           name="phone"
           required
+          placeholder="01XXXXXXXXX"
           value={formData.phone}
           onChange={handleChange}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0060B7]"
+          className={inputClass}
         />
       </div>
 
       <div>
-        <label htmlFor="message" className="mb-1 block text-sm font-medium text-gray-700">
-          Message <span className="text-red-500">*</span>
+        <label
+          htmlFor="message"
+          className="mb-1.5 block font-nunito text-sm font-medium text-[#191D23]"
+        >
+          Message <span className="text-red-400">*</span>
         </label>
         <textarea
           id="message"
@@ -440,15 +605,15 @@ function BookingForm({ onSubmit, isSubmitting, onClose }) {
           value={formData.message}
           onChange={handleChange}
           placeholder="Tell us about your requirements..."
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0060B7]"
+          className={inputClass + " resize-none"}
         />
       </div>
 
-      <div className="flex gap-3 pt-4">
+      <div className="flex gap-3 pt-2">
         <button
           type="button"
           onClick={onClose}
-          className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
+          className="flex-1 rounded-xl border-2 border-[#E2E8F0] px-4 py-2.5 font-nunito text-sm font-semibold text-[#475569] transition-all duration-200 hover:border-[#94A3B8] hover:bg-[#F8FAFC]"
           disabled={isSubmitting}
         >
           Cancel
@@ -456,9 +621,16 @@ function BookingForm({ onSubmit, isSubmitting, onClose }) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 rounded-md bg-[#0060B7] px-4 py-2 text-white hover:bg-[#03539d] disabled:opacity-50"
+          className="flex-1 rounded-xl bg-[#0060B7] px-4 py-2.5 font-nunito text-sm font-semibold text-white shadow-lg shadow-[#0060B7]/20 transition-all duration-200 hover:bg-[#004d93] disabled:opacity-50"
         >
-          {isSubmitting ? "Submitting..." : "Submit Booking"}
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              Submitting...
+            </span>
+          ) : (
+            "Submit Booking"
+          )}
         </button>
       </div>
     </form>
