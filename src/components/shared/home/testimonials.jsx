@@ -43,7 +43,36 @@ export default function Testimonials() {
   }, []);
 
   if (testimonials.length === 0) {
-    return null;
+    return (
+      <div className="my-12 sm:my-16 md:my-20 lg:my-24">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="mb-8 sm:mb-10 md:mb-12">
+            <div className="h-3 w-24 animate-pulse rounded-full bg-[#E2E8F0]" />
+            <div className="mt-3 h-8 w-64 animate-pulse rounded-lg bg-[#E2E8F0]" />
+          </div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-2xl border border-[#E2E8F0] bg-white p-5 sm:p-6"
+              >
+                <div className="mb-4 h-8 w-8 rounded bg-[#F1F5F9]" />
+                <div className="mb-2 h-4 w-full rounded bg-[#F1F5F9]" />
+                <div className="mb-2 h-4 w-full rounded bg-[#F1F5F9]" />
+                <div className="mb-5 h-4 w-2/3 rounded bg-[#F1F5F9]" />
+                <div className="flex items-center gap-3 border-t border-[#F1F5F9] pt-4">
+                  <div className="h-11 w-11 rounded-full bg-[#E2E8F0]" />
+                  <div>
+                    <div className="h-4 w-24 rounded bg-[#E2E8F0]" />
+                    <div className="mt-1 h-3 w-20 rounded bg-[#F1F5F9]" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

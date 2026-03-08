@@ -39,7 +39,24 @@ export default function TopCategories() {
   }, []);
 
   if (categories.length === 0) {
-    return null;
+    return (
+      <div className="my-12 sm:my-16 md:my-20 lg:my-24">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="mb-6 sm:mb-8 md:mb-10">
+            <div className="h-3 w-16 animate-pulse rounded-full bg-[#E2E8F0]" />
+            <div className="mt-3 h-8 w-52 animate-pulse rounded-lg bg-[#E2E8F0]" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="h-[240px] animate-pulse rounded-2xl bg-[#F1F5F9] sm:h-[280px] md:h-[320px]"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

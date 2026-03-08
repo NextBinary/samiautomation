@@ -34,7 +34,22 @@ export default function NewArrivals() {
   }, []);
 
   if (products.length === 0) {
-    return null;
+    return (
+      <section className="my-12 sm:my-16 md:my-20 lg:my-24">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="mb-6 sm:mb-8 md:mb-10">
+            <div className="h-3 w-14 animate-pulse rounded-full bg-[#E2E8F0]" />
+            <div className="mt-3 h-8 w-52 animate-pulse rounded-lg bg-[#E2E8F0]" />
+          </div>
+          <div className="grid grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+            <div className="col-span-2 row-span-2 h-[300px] animate-pulse rounded-2xl bg-[#F1F5F9] sm:h-[400px]" />
+            <div className="col-span-2 h-[140px] animate-pulse rounded-2xl bg-[#F1F5F9] sm:h-[190px]" />
+            <div className="col-span-1 h-[140px] animate-pulse rounded-2xl bg-[#F1F5F9] sm:h-[190px]" />
+            <div className="col-span-1 h-[140px] animate-pulse rounded-2xl bg-[#F1F5F9] sm:h-[190px]" />
+          </div>
+        </div>
+      </section>
+    );
   }
 
   const getImage = (serial) => products.find((p) => p.serial === serial)?.image;

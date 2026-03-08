@@ -41,7 +41,30 @@ export default function FeatureProduct() {
   }, []);
 
   if (products.length === 0) {
-    return null;
+    return (
+      <section className="my-12 sm:my-16 md:my-20 lg:my-24">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="mb-6 flex items-end justify-between sm:mb-8 md:mb-10">
+            <div>
+              <div className="h-3 w-20 animate-pulse rounded-full bg-[#E2E8F0]" />
+              <div className="mt-3 h-8 w-56 animate-pulse rounded-lg bg-[#E2E8F0]" />
+            </div>
+            <div className="h-10 w-24 animate-pulse rounded-full bg-[#E2E8F0]" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="animate-pulse rounded-2xl bg-[#F1F5F9]">
+                <div className="aspect-square rounded-t-2xl bg-[#E2E8F0]" />
+                <div className="p-3 sm:p-4">
+                  <div className="h-4 w-3/4 rounded bg-[#E2E8F0]" />
+                  <div className="mt-2 h-4 w-1/3 rounded bg-[#E2E8F0]" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (

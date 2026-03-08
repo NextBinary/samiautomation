@@ -1,93 +1,60 @@
-"use client";
-import ProductCard from "@/components/shared/cards/productCard";
-import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import ProductsByCategoryClient from "./ProductsByCategoryClient";
+import JsonLd from "@/components/shared/JsonLd";
 
-export default function Products() {
-  const params = useParams();
-  const [products, setProducts] = useState([]);
-  const [categoryName, setCategoryName] = useState("");
-  const [loading, setLoading] = useState(true);
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://samiautomationbd.com/";
 
-  const fetchProductsByCategory = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/product/getByReference?refField=category&refValue=${params.id}`,
-        {
-          cache: "no-store",
-        },
-      );
-      const result = await response.json();
+async function getCategoryData(id) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/product/getByReference?refField=category&refValue=${id}`,
+      { next: { revalidate: 3600 } },
+    );
+    if (!res.ok) return null;
+    const result = await res.json();
+    return result.data || null;
+  } catch {
+    return null;
+  }
+}
 
-      if (result.data && result.data.length > 0) {
-        const categoryProducts = result.data
-          .filter((item) => item.isActive)
-          .map((item) => ({
-            id: item._id,
-            image: `${process.env.NEXT_PUBLIC_SPACE_URL}${item.thumbnail}`,
-            title: item.name,
-            price: item.currentPrice,
-            colors: 1,
-            hasDiscount: item.originalPrice && item.originalPrice > 0,
-            discountPrice:
-              item.originalPrice && item.originalPrice > 0 ? item.originalPrice : undefined,
-          }));
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const data = await getCategoryData(id);
+  const categoryName = data?.[0]?.category?.name;
 
-        setProducts(categoryProducts);
-        if (categoryProducts.length > 0 && result.data[0].category) {
-          setCategoryName(result.data[0].category.name);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch products by category:", error);
-    } finally {
-      setLoading(false);
-    }
+  if (!categoryName) {
+    return { title: "Category Products" };
+  }
+
+  return {
+    title: `${categoryName}`,
+    description: `Browse ${categoryName} products from SAMI Automation — server racks, network cabinets, electrical panels, and industrial automation solutions in Bangladesh.`,
+    openGraph: {
+      title: `${categoryName} | SAMI Automation`,
+      description: `Explore our range of ${categoryName} products at SAMI Automation.`,
+    },
+  };
+}
+
+export default async function ProductsByCategoryPage({ params }) {
+  const { id } = await params;
+  const data = await getCategoryData(id);
+  const categoryName = data?.[0]?.category?.name;
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Categories", item: `${siteUrl}categories` },
+      ...(categoryName ? [{ "@type": "ListItem", position: 3, name: categoryName }] : []),
+    ],
   };
 
-  useEffect(() => {
-    if (params.id) {
-      fetchProductsByCategory();
-    }
-  }, [params.id]);
-
-  if (loading) {
-    return (
-      <div className="mt-10 px-2 lg:px-0">
-        <div className="flex h-96 items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-[#0060B7]"></div>
-            <p className="mt-2 text-[#0060B7]">Loading products...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (products.length === 0) {
-    return (
-      <div className="mt-10 flex h-[60dvh] items-center justify-center px-2 lg:px-0">
-        <div className="text-center">
-          <h2 className="mb-4 font-nunito text-3xl font-light text-[#202020] md:text-4xl">
-            No Products Found
-          </h2>
-          <p className="text-gray-600">No products available in this category.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="mt-10 px-2 lg:px-0">
-      <h2 className="mb-8 text-center font-nunito text-3xl font-light text-[#202020] md:text-4xl">
-        {categoryName} Products
-      </h2>
-
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-    </div>
+    <>
+      <JsonLd data={breadcrumbJsonLd} />
+      <ProductsByCategoryClient />
+    </>
   );
 }

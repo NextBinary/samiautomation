@@ -33,7 +33,29 @@ export default function WhySamiAutomation() {
   }, []);
 
   if (features.length === 0) {
-    return null;
+    return (
+      <section className="my-12 sm:my-16 md:my-20 lg:my-24">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="mb-6 sm:mb-8 md:mb-10">
+            <div className="h-3 w-20 animate-pulse rounded-full bg-[#E2E8F0]" />
+            <div className="mt-3 h-8 w-48 animate-pulse rounded-lg bg-[#E2E8F0]" />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="flex animate-pulse flex-col items-center rounded-2xl border border-[#E2E8F0] bg-white p-6 sm:p-8"
+              >
+                <div className="mb-4 h-16 w-16 rounded-full bg-[#F1F5F9] sm:h-20 sm:w-20" />
+                <div className="mb-2 h-5 w-32 rounded bg-[#E2E8F0]" />
+                <div className="h-4 w-full rounded bg-[#F1F5F9]" />
+                <div className="mt-1.5 h-4 w-2/3 rounded bg-[#F1F5F9]" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (

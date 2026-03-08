@@ -53,7 +53,26 @@ export default function Hero() {
   }, [carouselData.length]);
 
   if (carouselData.length === 0) {
-    return null;
+    return (
+      <div className="bg-gradient-to-br from-[#EBF3FC] via-[#D5E8FF] to-[#BDDBFA]">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex flex-col items-center gap-6 py-8 sm:py-10 md:flex-row md:gap-8 md:py-14 lg:py-16">
+            <div className="flex-1 space-y-4">
+              <div className="h-3 w-20 animate-pulse rounded-full bg-[#0060B7]/10" />
+              <div className="bg-[#0060B7]/8 h-10 w-3/4 animate-pulse rounded-lg" />
+              <div className="bg-[#0060B7]/8 h-10 w-1/2 animate-pulse rounded-lg" />
+              <div className="h-4 w-full animate-pulse rounded bg-[#0060B7]/5" />
+              <div className="h-4 w-2/3 animate-pulse rounded bg-[#0060B7]/5" />
+              <div className="flex gap-3 pt-2">
+                <div className="h-11 w-32 animate-pulse rounded-lg bg-[#0060B7]/10" />
+                <div className="h-11 w-28 animate-pulse rounded-lg bg-[#0060B7]/5" />
+              </div>
+            </div>
+            <div className="hidden h-[350px] flex-1 animate-pulse rounded-2xl bg-[#0060B7]/5 md:block lg:h-[400px]" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const currentCarousel = carouselData[currentIndex];
