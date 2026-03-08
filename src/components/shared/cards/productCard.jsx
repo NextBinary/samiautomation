@@ -12,38 +12,65 @@ export default function ProductCard({ product }) {
     discountPrice,
   } = product || {};
 
+  const discountPercent =
+    hasDiscount && discountPrice && discountPrice > price
+      ? Math.round(((discountPrice - price) / discountPrice) * 100)
+      : 0;
+
   return (
-    <div className="overflow-hidden rounded-lg border border-[#B4B4B4]">
-      <div className="p-1 lg:p-2">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-md">
+    <div className="group overflow-hidden rounded-xl border border-[#E2E8F0] bg-white transition-all duration-300 hover:border-[#0060B7]/20 hover:shadow-[0_8px_30px_rgba(0,96,183,0.08)]">
+      {/* Image container */}
+      <div className="relative overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#F8FAFC]">
           <Image
             src={image}
             alt={title}
             fill
-            className="rounded-md object-cover transition-transform duration-300 ease-in-out hover:scale-125 group-hover:scale-125"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
           />
         </div>
-        <p className="pt-2 font-nunito text-[10px] font-light text-[#64748B] md:text-xs">
-          Color {colors} available
-        </p>
-        <h3 className="my-1 font-nunito text-base font-medium text-[#191D23] md:text-xl">
-          {title.length > 20 ? `${title.slice(0, 20)}...` : title}
+
+        {/* Discount badge */}
+        {discountPercent > 0 && (
+          <div className="absolute left-2.5 top-2.5 rounded-md bg-[#0060B7] px-2 py-0.5 font-nunito text-[10px] font-bold text-white sm:text-xs">
+            -{discountPercent}%
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-3 sm:p-4">
+        {/* Colors */}
+        {colors > 0 && (
+          <p className="mb-1 font-nunito text-[10px] font-medium uppercase tracking-wider text-[#94A3B8] sm:text-[11px]">
+            {colors} {colors === 1 ? "variant" : "variants"} available
+          </p>
+        )}
+
+        {/* Title */}
+        <h3
+          className="mb-2 truncate font-nunito text-sm font-semibold text-[#191D23] sm:mb-3 sm:text-base"
+          title={title}
+        >
+          {title}
         </h3>
-        <div className="my-1 flex items-center justify-between lg:my-3">
-          <p>
-            <span className="text-sm font-semibold text-[#191D23] md:text-base lg:text-xl">
-              ৳{price.toFixed(1)}
+
+        {/* Price & CTA */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-baseline gap-1.5 sm:gap-2">
+            <span className="font-nunito text-base font-bold text-[#191D23] sm:text-lg lg:text-xl">
+              ৳{price.toFixed(0)}
             </span>
             {hasDiscount && discountPrice && (
-              <span className="ml-1 text-xs font-light text-[#191D23] line-through md:ml-4 md:text-base">
-                ৳{discountPrice.toFixed(1)}
+              <span className="font-nunito text-[11px] font-medium text-[#94A3B8] line-through sm:text-xs">
+                ৳{discountPrice.toFixed(0)}
               </span>
             )}
-          </p>
+          </div>
           <ButtonBlue
-            title={"Book Now"}
+            title="Book Now"
             handler={`/product/${product.id}`}
-            className="w-20 whitespace-nowrap px-1 py-1 lg:w-28 lg:px-4 lg:py-2"
+            className="!rounded-lg !px-2.5 !py-1 !text-[11px] sm:!px-4 sm:!py-1.5 sm:!text-xs"
           />
         </div>
       </div>
