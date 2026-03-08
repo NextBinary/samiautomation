@@ -31,8 +31,6 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # Ignore environment variables and build files
-.env.local
-.env*
 .vercel
 
 # typescript
@@ -47,3 +45,4 @@ yarn.lock
 pnpm-lock.yaml
 bun.lockb
 bun.lock
+config.bat
