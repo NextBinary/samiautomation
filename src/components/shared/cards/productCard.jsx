@@ -10,7 +10,7 @@ export default function ProductCard({ product }) {
 
   return (
     <div
-      className="group cursor-pointer overflow-hidden rounded-xl border border-[#E2E8F0] bg-white transition-all duration-300 hover:border-[#0060B7]/20 hover:shadow-[0_8px_30px_rgba(0,96,183,0.08)]"
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#E2E8F0] bg-white transition-all duration-300 hover:border-[#0060B7]/20 hover:shadow-[0_8px_30px_rgba(0,96,183,0.08)]"
       onClick={() => router.push(`/product/${product.id}`)}
     >
       {/* Image container */}
@@ -26,7 +26,7 @@ export default function ProductCard({ product }) {
       </div>
 
       {/* Content */}
-      <div className="p-3 sm:p-4">
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
         {/* Colors */}
         {colors > 0 && (
           <p className="mb-1 font-nunito text-[10px] font-medium uppercase tracking-wider text-[#94A3B8] sm:text-[11px]">
@@ -42,17 +42,16 @@ export default function ProductCard({ product }) {
           {title}
         </h3>
 
-        {/* Price & CTA */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-baseline gap-1.5 sm:gap-2">
-            <span className="font-nunito text-base font-bold text-[#191D23] sm:text-lg lg:text-xl">
-              {formatPrice(price)}
-            </span>
+        {/* Price & CTA — stacked, because a range like "৳9,999 – ৳12,500" cannot
+            share a row with the button at card width without both wrapping. */}
+        <div className="mt-auto">
+          <div className="mb-2.5 whitespace-nowrap font-nunito text-base font-bold text-[#191D23] sm:text-lg">
+            {formatPrice(price)}
           </div>
           <ButtonBlue
             title="Book Now"
             handler={`/product/${product.id}`}
-            className="!rounded-lg !px-2.5 !py-1 !text-[11px] sm:!px-4 sm:!py-1.5 sm:!text-xs"
+            className="!w-full !whitespace-nowrap !rounded-lg !px-3 !py-1.5 !text-xs sm:!text-sm"
           />
         </div>
       </div>
