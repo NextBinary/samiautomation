@@ -7,7 +7,8 @@ const spaceUrl = process.env.NEXT_PUBLIC_SPACE_URL;
 async function getProduct(id) {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product/getSingleItem/${id}`, {
-      next: { revalidate: 3600 },
+      // No cache: a price or serial edited in the CMS must show at once.
+      cache: "no-store",
     });
     if (!res.ok) return null;
     const result = await res.json();
