@@ -12,7 +12,7 @@ export default function Products() {
   const fetchProductsByCategory = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/product/getByReference?refField=category&refValue=${params.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/product/getByReference?refField=category&refValue=${params.id}&sort=serial,createdAt&limit=100`,
         {
           cache: "no-store",
         },
@@ -28,9 +28,6 @@ export default function Products() {
             title: item.name,
             price: item.currentPrice,
             colors: 1,
-            hasDiscount: item.originalPrice && item.originalPrice > 0,
-            discountPrice:
-              item.originalPrice && item.originalPrice > 0 ? item.originalPrice : undefined,
           }));
 
         setProducts(categoryProducts);

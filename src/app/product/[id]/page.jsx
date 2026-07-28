@@ -57,6 +57,35 @@ export async function generateMetadata({ params }) {
   };
 }
 
+/**
+ * schema.org rejects a range in Offer.price, and the CMS price is free text so
+ * it may hold "5000-20000" or a note like "Call for price". Emit AggregateOffer
+ * for a range, Offer for a single figure, and nothing at all when there is no
+ * number to publish — a wrong price is worse for search than no price.
+ */
+function priceOffer(raw) {
+  const text = String(raw ?? "").trim();
+  const range = text.match(/^(\d+(?:\.\d+)?)\s*[-\u2013\u2014]\s*(\d+(?:\.\d+)?)$/);
+  if (range) {
+    return {
+      "@type": "AggregateOffer",
+      lowPrice: range[1],
+      highPrice: range[2],
+      priceCurrency: "BDT",
+      availability: "https://schema.org/InStock",
+    };
+  }
+  if (/^\d+(\.\d+)?$/.test(text)) {
+    return {
+      "@type": "Offer",
+      price: text,
+      priceCurrency: "BDT",
+      availability: "https://schema.org/InStock",
+    };
+  }
+  return undefined;
+}
+
 export default async function ProductPage({ params }) {
   const { id } = await params;
   const product = await getProduct(id);
@@ -68,12 +97,7 @@ export default async function ProductPage({ params }) {
         name: product.name,
         description: stripHtml(product.description).slice(0, 500),
         image: product.thumbnail ? `${spaceUrl}${product.thumbnail}` : undefined,
-        offers: {
-          "@type": "Offer",
-          price: product.currentPrice,
-          priceCurrency: "BDT",
-          availability: "https://schema.org/InStock",
-        },
+        offers: priceOffer(product.currentPrice),
       }
     : null;
 

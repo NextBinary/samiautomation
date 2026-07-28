@@ -57,7 +57,6 @@ export default function Product() {
           id: productData._id,
           name: productData.name,
           currentPrice: productData.currentPrice,
-          originalPrice: productData.originalPrice,
           images: images,
           features: productData.features,
           specifications: productData.specifications,
@@ -176,13 +175,7 @@ export default function Product() {
     );
   }
 
-  const { name, currentPrice, originalPrice, images, features, specifications, descriptionText } =
-    product;
-
-  const discountPercent =
-    originalPrice && originalPrice > currentPrice
-      ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
-      : 0;
+  const { name, currentPrice, images, features, specifications, descriptionText } = product;
 
   return (
     <div className="my-8 sm:my-10 md:my-12">
@@ -253,12 +246,6 @@ export default function Product() {
                 />
               </div>
 
-              {discountPercent > 0 && (
-                <div className="absolute right-3 top-3 z-20 rounded-lg bg-[#0060B7] px-2.5 py-1 font-nunito text-xs font-bold text-white">
-                  -{discountPercent}%
-                </div>
-              )}
-
               {/* Zoom hint */}
               <div
                 className="pointer-events-none absolute bottom-3 left-3 z-20 hidden items-center gap-1.5 rounded-lg bg-black/50 px-2.5 py-1 font-nunito text-[11px] text-white/80 backdrop-blur-sm transition-opacity duration-300 lg:flex"
@@ -319,18 +306,8 @@ export default function Product() {
             {/* Price section */}
             <div className="mb-6 flex items-baseline gap-3">
               <span className="font-nunito text-3xl font-bold text-[#191D23] sm:text-4xl">
-                ৳{currentPrice?.toLocaleString()}
+                {formatPrice(currentPrice)}
               </span>
-              {originalPrice && originalPrice > currentPrice && (
-                <span className="font-nunito text-lg text-[#94A3B8] line-through">
-                  ৳{originalPrice?.toLocaleString()}
-                </span>
-              )}
-              {discountPercent > 0 && (
-                <span className="rounded-md bg-[#0060B7]/10 px-2 py-0.5 font-nunito text-sm font-semibold text-[#0060B7]">
-                  Save {discountPercent}%
-                </span>
-              )}
             </div>
 
             {/* Divider */}

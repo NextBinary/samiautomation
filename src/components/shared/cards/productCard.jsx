@@ -2,22 +2,11 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ButtonBlue from "../button";
+import { formatPrice } from "@/utils/formatPrice";
 
 export default function ProductCard({ product }) {
   const router = useRouter();
-  const {
-    image,
-    title = "Super Shop Store Solution",
-    price = 1045.3,
-    colors = 4,
-    hasDiscount = true,
-    discountPrice,
-  } = product || {};
-
-  const discountPercent =
-    hasDiscount && discountPrice && discountPrice > price
-      ? Math.round(((discountPrice - price) / discountPrice) * 100)
-      : 0;
+  const { image, title = "Super Shop Store Solution", price = "", colors = 4 } = product || {};
 
   return (
     <div
@@ -34,13 +23,6 @@ export default function ProductCard({ product }) {
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
           />
         </div>
-
-        {/* Discount badge */}
-        {discountPercent > 0 && (
-          <div className="absolute right-2.5 top-2.5 rounded-md bg-[#0060B7] px-2 py-0.5 font-nunito text-[10px] font-bold text-white sm:text-xs">
-            -{discountPercent}%
-          </div>
-        )}
       </div>
 
       {/* Content */}
@@ -64,13 +46,8 @@ export default function ProductCard({ product }) {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-baseline gap-1.5 sm:gap-2">
             <span className="font-nunito text-base font-bold text-[#191D23] sm:text-lg lg:text-xl">
-              ৳{price.toFixed(0)}
+              {formatPrice(price)}
             </span>
-            {hasDiscount && discountPrice && (
-              <span className="font-nunito text-[11px] font-medium text-[#94A3B8] line-through sm:text-xs">
-                ৳{discountPrice.toFixed(0)}
-              </span>
-            )}
           </div>
           <ButtonBlue
             title="Book Now"

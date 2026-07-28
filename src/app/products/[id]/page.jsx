@@ -6,7 +6,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://samiautomationbd.co
 async function getCategoryData(id) {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/product/getByReference?refField=category&refValue=${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/product/getByReference?refField=category&refValue=${id}&sort=serial,createdAt&limit=100`,
       { next: { revalidate: 3600 } },
     );
     if (!res.ok) return null;

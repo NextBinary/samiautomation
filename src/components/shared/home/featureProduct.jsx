@@ -9,9 +9,12 @@ export default function FeatureProduct() {
 
   const fetchProductsData = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/product?all=true`, {
-        cache: "no-store",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/product?all=true&sort=serial,createdAt`,
+        {
+          cache: "no-store",
+        },
+      );
       const result = await response.json();
 
       if (result.data && result.data.length > 0) {
@@ -24,9 +27,6 @@ export default function FeatureProduct() {
             title: item.name,
             price: item.currentPrice,
             colors: 1,
-            hasDiscount: item.originalPrice && item.originalPrice > 0,
-            discountPrice:
-              item.originalPrice && item.originalPrice > 0 ? item.originalPrice : undefined,
           }));
 
         setProducts(featuredProducts);
