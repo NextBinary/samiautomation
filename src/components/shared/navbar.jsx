@@ -1,15 +1,53 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import img1 from "@/assets/images/logo.png";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 
+/**
+ * Declared at module scope on purpose. Defined inside Navbar it was a new
+ * component type on every render, so React tore down and rebuilt the result
+ * rows mid-interaction and the click never reached its handler.
+ */
+function SearchDropdown({ results, onSelect }) {
+  return (
+    <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-y-auto rounded-xl border border-[#E2E8F0] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
+      {results.length > 0 ? (
+        results.map((product) => (
+          <Link
+            key={product.id}
+            href={`/product/${product.id}`}
+            onClick={onSelect}
+            className="flex cursor-pointer items-center gap-3 border-b border-[#F1F5F9] px-4 py-3 transition-colors duration-150 last:border-b-0 hover:bg-[#F8FAFC]"
+          >
+            <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-[#F1F5F9]">
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                className="object-cover"
+                sizes="40px"
+              />
+            </div>
+            <p className="truncate font-nunito text-sm font-medium text-[#191D23]">
+              {product.name}
+            </p>
+          </Link>
+        ))
+      ) : (
+        <div className="px-4 py-6 text-center">
+          <p className="font-nunito text-sm text-[#94A3B8]">No products found</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -41,7 +79,7 @@ export default function Navbar() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/product/search?query=${encodeURIComponent(query)}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/product/search?query=${encodeURIComponent(query)}&sort=serial,createdAt`,
         {
           cache: "no-store",
         },
@@ -83,17 +121,20 @@ export default function Navbar() {
     }, 300);
   };
 
-  const handleProductClick = (productId) => {
+  const handleResultSelect = () => {
     setShowResults(false);
     setSearchQuery("");
-    router.push(`/product/${productId}`);
+    setSearchResults([]);
   };
 
   const handleClickOutside = (event) => {
-    if (searchRef.current && !searchRef.current.contains(event.target)) {
-      setShowResults(false);
-    }
-    if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target)) {
+    // The mobile and desktop search boxes are both mounted at all times — one is
+    // only hidden by CSS. Testing them separately meant a click inside the
+    // desktop dropdown still counted as "outside" the mobile one, so mousedown
+    // closed the dropdown and the click never landed on a result.
+    const insideDesktop = searchRef.current?.contains(event.target);
+    const insideMobile = mobileSearchRef.current?.contains(event.target);
+    if (!insideDesktop && !insideMobile) {
       setShowResults(false);
     }
   };
@@ -112,38 +153,6 @@ export default function Navbar() {
       }
     };
   }, []);
-
-  const SearchDropdown = () =>
-    showResults && (
-      <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-80 overflow-y-auto rounded-xl border border-[#E2E8F0] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
-        {searchResults.length > 0 ? (
-          searchResults.map((product) => (
-            <div
-              key={product.id}
-              onClick={() => handleProductClick(product.id)}
-              className="flex cursor-pointer items-center gap-3 border-b border-[#F1F5F9] px-4 py-3 transition-colors duration-150 last:border-b-0 hover:bg-[#F8FAFC]"
-            >
-              <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg bg-[#F1F5F9]">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  sizes="40px"
-                />
-              </div>
-              <p className="truncate font-nunito text-sm font-medium text-[#191D23]">
-                {product.name}
-              </p>
-            </div>
-          ))
-        ) : (
-          <div className="px-4 py-6 text-center">
-            <p className="font-nunito text-sm text-[#94A3B8]">No products found</p>
-          </div>
-        )}
-      </div>
-    );
 
   return (
     <>
@@ -227,7 +236,9 @@ export default function Navbar() {
                 <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-[#0060B7]/20 border-t-[#0060B7]" />
               )}
             </div>
-            <SearchDropdown />
+            {showResults && (
+              <SearchDropdown results={searchResults} onSelect={handleResultSelect} />
+            )}
           </div>
         </nav>
       </div>
@@ -288,7 +299,9 @@ export default function Navbar() {
                 <div className="mr-3 h-4 w-4 animate-spin rounded-full border-2 border-[#0060B7]/20 border-t-[#0060B7]" />
               )}
             </div>
-            <SearchDropdown />
+            {showResults && (
+              <SearchDropdown results={searchResults} onSelect={handleResultSelect} />
+            )}
           </div>
         </nav>
       </div>
