@@ -1,9 +1,9 @@
 {
   "name": "dr-samdani",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node api.js && next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node api.js && next start",
     "lint": "next lint",
     "format:check": "prettier --check ./src",
     "format:fix": "prettier --write ./src",
